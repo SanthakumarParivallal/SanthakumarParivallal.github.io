@@ -3,126 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Santhakumar Parivallal | Root Access</title>
+    <title>Santhakumar | Hidden Service .onion</title>
     <style>
         :root {
-            --neon-green: #0f0;
-            --kali-red: #ff3333;
-            --bg-color: #050505;
+            --toxic-green: #00d400;
+            --blood-red: #ff003c;
+            --dark-bg: #030303;
+            --terminal-gray: #1a1a1a;
         }
         
         body, html {
             margin: 0;
             padding: 0;
-            background-color: var(--bg-color);
-            color: var(--neon-green);
+            background-color: var(--dark-bg);
+            color: #d3d3d3;
             font-family: 'Courier New', Courier, monospace;
             overflow-x: hidden;
             font-size: 15px;
         }
 
-        /* CRT Scanline Effect */
+        /* Matrix Background Canvas */
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        /* CRT Overlay */
         body::after {
             content: " ";
             display: block;
             position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
+            top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
             background-size: 100% 4px;
             z-index: 100;
             pointer-events: none;
         }
 
-        /* Screen Flicker */
-        .crt {
-            animation: textShadow 1.6s infinite;
+        .container {
             padding: 20px;
             max-width: 900px;
             margin: 0 auto;
+            position: relative;
+            z-index: 10;
         }
 
-        @keyframes textShadow {
-            0% { text-shadow: 0.4389924193300864px 0 1px rgba(0,30,255,0.5), -0.4389924193300864px 0 1px rgba(255,0,80,0.3), 0 0 3px var(--neon-green); }
-            5% { text-shadow: 2.7928974010788217px 0 1px rgba(0,30,255,0.5), -2.7928974010788217px 0 1px rgba(255,0,80,0.3), 0 0 3px var(--neon-green); }
-            100% { text-shadow: 0.4389924193300864px 0 1px rgba(0,30,255,0.5), -0.4389924193300864px 0 1px rgba(255,0,80,0.3), 0 0 3px var(--neon-green); }
+        /* Glitch Effect for Logo */
+        .glitch-wrapper {
+            color: var(--blood-red);
+            font-size: 10px;
+            font-weight: bold;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px var(--blood-red);
+        }
+        
+        .glitch-wrapper::before, .glitch-wrapper::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+        }
+        
+        .glitch-wrapper::before {
+            left: 2px;
+            text-shadow: -1px 0 var(--toxic-green);
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+        }
+        
+        .glitch-wrapper::after {
+            left: -2px;
+            text-shadow: -1px 0 blue;
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { clip-path: inset(20% 0 80% 0); }
+            20% { clip-path: inset(60% 0 10% 0); }
+            40% { clip-path: inset(40% 0 50% 0); }
+            60% { clip-path: inset(80% 0 5% 0); }
+            80% { clip-path: inset(10% 0 70% 0); }
+            100% { clip-path: inset(30% 0 20% 0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(10% 0 60% 0); }
+            20% { clip-path: inset(30% 0 20% 0); }
+            40% { clip-path: inset(70% 0 10% 0); }
+            60% { clip-path: inset(20% 0 50% 0); }
+            80% { clip-path: inset(50% 0 30% 0); }
+            100% { clip-path: inset(5% 0 80% 0); }
         }
 
         /* Boot Sequence Overlay */
         #boot-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: black;
+            background-color: var(--dark-bg);
             z-index: 50;
             padding: 20px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
+            color: var(--toxic-green);
+            text-shadow: 0 0 3px var(--toxic-green);
         }
 
-        #main-content {
-            display: none;
-        }
+        #main-content { display: none; }
 
         h1, h2, h3 { font-weight: normal; margin-top: 0; }
         
-        .prompt { color: var(--kali-red); font-weight: bold; }
-        .command { color: #fff; text-shadow: 0 0 5px #fff; }
+        .prompt { color: var(--blood-red); font-weight: bold; }
+        .command { color: #fff; text-shadow: 0 0 4px rgba(255,255,255,0.5); }
         
-        .section { margin-bottom: 30px; border-left: 2px solid #333; padding-left: 15px; }
-        .section:hover { border-left: 2px solid var(--neon-green); }
+        .section { 
+            margin-bottom: 30px; 
+            border-left: 2px solid #333; 
+            padding-left: 15px; 
+            background: rgba(26, 26, 26, 0.6);
+            padding: 15px;
+            border-radius: 0 5px 5px 0;
+            transition: all 0.3s ease;
+        }
+        .section:hover { border-left: 2px solid var(--blood-red); background: rgba(26, 26, 26, 0.9); }
 
         ul { list-style-type: none; padding-left: 10px; margin-top: 10px; }
-        ul li::before { content: "[+] "; color: var(--kali-red); }
+        ul li::before { content: "[!] "; color: var(--blood-red); font-weight: bold; }
         
         .sub-list { padding-left: 25px; color: #aaa; }
-        .sub-list li::before { content: "-> "; color: #555; }
+        .sub-list li::before { content: "> "; color: var(--toxic-green); }
 
-        a { color: var(--neon-green); text-decoration: none; border-bottom: 1px dotted var(--neon-green); }
-        a:hover { background-color: var(--neon-green); color: #000; }
+        a { color: var(--toxic-green); text-decoration: none; border-bottom: 1px dotted var(--toxic-green); }
+        a:hover { background-color: var(--toxic-green); color: #000; text-shadow: none; }
         
-        .highlight { background-color: #222; padding: 2px 5px; color: #fff; }
-        .blink { animation: blinker 1s linear infinite; font-weight: bold; }
+        .highlight { background-color: var(--blood-red); padding: 2px 5px; color: #fff; font-weight: bold; }
+        .blink { animation: blinker 1s linear infinite; font-weight: bold; color: var(--toxic-green); }
         @keyframes blinker { 50% { opacity: 0; } }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #333; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
+        ::-webkit-scrollbar-thumb { background: var(--blood-red); }
     </style>
 </head>
 <body>
+
+    <canvas id="matrix"></canvas>
 
     <div id="boot-screen">
         <div id="boot-text"></div>
         <span class="blink">_</span>
     </div>
 
-    <div class="crt" id="main-content">
-        <div style="margin-bottom: 20px;">
-            <pre style="color: var(--kali-red); text-shadow: 0 0 5px var(--kali-red); font-size: 10px;">
+    <div class="container" id="main-content">
+        <div style="margin-bottom: 30px;">
+            <pre class="glitch-wrapper" data-text="
   ____              _   _           _                                 
  / ___|  __ _ _ __ | |_| |__   __ _| | ___   _ _ __ ___   __ _ _ __   
  \___ \ / _` | '_ \| __| '_ \ / _` | |/ / | | | '_ ` _ \ / _` | '__|  
   ___) | (_| | | | | |_| | | | (_| |   <| |_| | | | | | | (_| | |     
  |____/ \__,_|_| |_|\__|_| |_|\__,_|_|\_\\__,_|_| |_| |_|\__,_|_|     
-            </pre>
-            <span class="prompt">root@santha:~#</span> <span class="command">./execute_payload.sh --target=portfolio</span>
+            ">
+  ____              _   _           _                                 
+ / ___|  __ _ _ __ | |_| |__   __ _| | ___   _ _ __ ___   __ _ _ __   
+ \___ \ / _` | '_ \| __| '_ \ / _` | |/ / | | | '_ ` _ \ / _` | '__|  
+  ___) | (_| | | | | |_| | | | (_| |   <| |_| | | | | | | (_| | |     
+ |____/ \__,_|_| |_|\__|_| |_|\__,_|_|\_\\__,_|_| |_| |_|\__,_|_|     
+            </pre><br>
+            <span class="prompt">anon@onion-router:~#</span> <span class="command">./decrypt_dossier.sh --target=Santhakumar</span>
         </div>
 
         <div class="section">
-            <h2><span class="prompt">root@santha:~#</span> <span class="command">whoami</span></h2>
-            <p><strong>USER:</strong> Santhakumar Parivallal</p>
-            <p><strong>DESIGNATION:</strong> Multi-certified Cybersecurity Professional / Red Team Specialist</p>
-            <p><strong>LOCATION:</strong> Birmingham, UK (B20 2JR)</p>
-            <p><strong>STATUS:</strong> MSc Cyber Security student at Birmingham City University. Expert in penetration testing, Red Team operations, and ISO 27001 auditing. Simulating real-world cyber threats to strengthen organizational defenses.</p>
+            <h2><span class="prompt">anon@onion-router:~#</span> <span class="command">whoami</span></h2>
+            <p><strong>ALIAS:</strong> Santhakumar Parivallal</p>
+            <p><strong>CLASS:</strong> Multi-certified Cybersecurity Professional / Red Team Specialist</p>
+            <p><strong>NODE:</strong> Birmingham, UK (B20 2JR)</p>
+            <p><strong>STATUS:</strong> MSc Cyber Security operator at Birmingham City University. Expert in penetration testing, Red Team operations, and ISO 27001 auditing. Simulating real-world cyber threats to strengthen organizational defenses.</p>
         </div>
 
         <div class="section">
-            <h2><span class="prompt">root@santha:~#</span> <span class="command">cat education.log</span></h2>
+            <h2><span class="prompt">anon@onion-router:~#</span> <span class="command">cat /var/data/education.enc</span></h2>
             <ul>
                 <li><span class="highlight">MSc Cyber Security</span> - Birmingham City University, UK (Expected Sept 2026)</li>
                 <li><span class="highlight">B.E. Computer Science</span> - Anjalai Ammal Mahalingam Eng. College, India (Oct 2023)</li>
@@ -130,23 +197,23 @@
         </div>
 
         <div class="section">
-            <h2><span class="prompt">root@santha:~#</span> <span class="command">tail -f /var/log/experience</span></h2>
+            <h2><span class="prompt">anon@onion-router:~#</span> <span class="command">tail -f /logs/operations.log</span></h2>
             <ul>
                 <li><strong>Deloitte</strong> | Cybersecurity Intern (Dec 2025)
                     <ul class="sub-list">
                         <li>Analyzed enterprise security frameworks & evaluated organizational risk postures.</li>
-                        <li>Identified potential infrastructure vulnerabilities for internal teams.</li>
+                        <li>Identified critical infrastructure vulnerabilities for internal defense teams.</li>
                     </ul>
                 </li>
                 <li><strong>Tata Group</strong> | Cybersecurity Analyst Intern (Dec 2025)
                     <ul class="sub-list">
                         <li>Executed threat monitoring & security incident response simulations.</li>
-                        <li>Recommended security hardening measures using data-driven insights.</li>
+                        <li>Deployed data-driven insights to harden corporate networks against intrusion.</li>
                     </ul>
                 </li>
                 <li><strong>Mastercard</strong> | Cybersecurity Job Simulation (Dec 2025)
                     <ul class="sub-list">
-                        <li>Designed & analyzed professional phishing email simulations.</li>
+                        <li>Engineered and analyzed professional phishing email simulations.</li>
                     </ul>
                 </li>
                 <li><strong>Invoking System Pvt. Ltd.</strong> | Full Stack Developer Intern (Feb - Aug 2024)
@@ -158,7 +225,7 @@
         </div>
 
         <div class="section">
-            <h2><span class="prompt">root@santha:~#</span> <span class="command">ls -la /skills/ && nmap -sV --script vuln</span></h2>
+            <h2><span class="prompt">anon@onion-router:~#</span> <span class="command">nmap -sV --script exploit -p- localhost</span></h2>
             <ul>
                 <li><strong>Offensive:</strong> Red Team Ops, Penetration Testing, Exploitation, Social Engineering</li>
                 <li><strong>Defensive:</strong> ISO/IEC 27001 Lead Auditing, Vulnerability Assessment, Threat Detection</li>
@@ -168,7 +235,7 @@
         </div>
 
         <div class="section">
-            <h2><span class="prompt">root@santha:~#</span> <span class="command">grep -i "certified" auth_keys.txt</span></h2>
+            <h2><span class="prompt">anon@onion-router:~#</span> <span class="command">cat private_keys.asc</span></h2>
             <ul>
                 <li>ISO/IEC 27001:2022 Lead Auditor (Mastermind) - Jan 2026</li>
                 <li>Certified Cybersecurity Educator Professional (CCEP) Red Team - Jan 2026</li>
@@ -179,28 +246,55 @@
         </div>
 
         <div class="section">
-            <h2><span class="prompt">root@santha:~#</span> <span class="command">./connect.py --socials</span></h2>
+            <h2><span class="prompt">anon@onion-router:~#</span> <span class="command">nc -lvnp 4444</span></h2>
             <ul>
-                <li><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/santhakumar-parivallal-81307230a" target="_blank">Access Profile</a></li>
-                <li><strong>Email:</strong> <a href="mailto:santha6383@gmail.com">santha6383@gmail.com</a></li>
+                <li><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/santhakumar-parivallal-81307230a" target="_blank">Initiate Connection</a></li>
+                <li><strong>Secure Email:</strong> <a href="mailto:santha6383@gmail.com">santha6383@gmail.com</a></li>
                 <li><strong>Comms:</strong> +44 7435709629</li>
             </ul>
         </div>
         
-        <div><span class="prompt">root@santha:~#</span> <span class="blink">_</span></div>
+        <div><span class="prompt">anon@onion-router:~#</span> <span class="blink">_</span></div>
     </div>
 
     <script>
-        // Fake Boot Sequence Script
+        // Matrix Rain Effect Background
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const matrixChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()";
+        const charsArray = matrixChars.split("");
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        for (let x = 0; x < columns; x++) drops[x] = 1;
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#ff003c"; // Red matrix rain to fit dark web theme
+            ctx.font = fontSize + "px Courier New";
+            for (let i = 0; i < drops.length; i++) {
+                const text = charsArray[Math.floor(Math.random() * charsArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 35);
+
+        // Dark Web Boot Sequence
         const bootText = [
-            "INIT: version 2.88 booting",
-            "Loading Linux kernel...",
-            "Mounting local filesystems... [ OK ]",
-            "Starting network interface... [ OK ]",
-            "Bypassing mainframe firewall... [ OK ]",
-            "Decrypting payload... [ OK ]",
-            "Establishing secure connection to B20 2JR...",
-            "Access Granted. Launching UI..."
+            "[+] Initializing Tor circuit...",
+            "[+] Establishing connection to entry guard...",
+            "[+] Building circuit via encrypted relays...",
+            "[+] Exit node established. IP masked. Identity hidden.",
+            "[*] Accessing hidden service (.onion)...",
+            "[!] WARNING: ENCRYPTED DATABANK DETECTED",
+            "[*] Initiating brute-force decryption on dossier...",
+            "[*] Bypassing security protocols... [SUCCESS]",
+            "[+] ROOT ACCESS GRANTED. Loading payload..."
         ];
 
         let bootDiv = document.getElementById("boot-text");
@@ -208,17 +302,21 @@
 
         bootText.forEach((line, index) => {
             setTimeout(() => {
-                bootDiv.innerHTML += `<div>${line}</div>`;
+                let color = line.includes("WARNING") || line.includes("SUCCESS") ? "var(--blood-red)" : "var(--toxic-green)";
+                bootDiv.innerHTML += `<div style="color: ${color}; padding: 2px 0;">${line}</div>`;
                 window.scrollTo(0, document.body.scrollHeight);
             }, delay);
-            // Make the bypass line take a little longer for dramatic effect
-            delay += (index === 4) ? 800 : 300; 
+            // Dramatic pause for the warning and decryption
+            if (index === 4) delay += 1000;
+            else if (index === 5) delay += 1500;
+            else delay += 400; 
         });
 
         setTimeout(() => {
             document.getElementById("boot-screen").style.display = "none";
             document.getElementById("main-content").style.display = "block";
-        }, delay + 500);
+            window.scrollTo(0, 0);
+        }, delay + 800);
     </script>
 </body>
 </html>
