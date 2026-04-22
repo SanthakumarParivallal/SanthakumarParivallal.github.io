@@ -23,7 +23,7 @@
             cursor: none; 
         }
 
-        /* --- NEW ADVANCED MOUSE GRAPHICS --- */
+        /* CUSTOM MOUSE */
         #cursor-dot {
             position: fixed; top: 0; left: 0; width: 4px; height: 4px; 
             background-color: var(--cyber-blue);
@@ -41,8 +41,8 @@
             animation: spinTarget 6s linear infinite;
         }
         @keyframes spinTarget { 100% { transform: rotate(360deg); } }
-        /* ----------------------------------- */
 
+        /* BACKGROUNDS */
         .hud-grid {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-image: 
@@ -63,6 +63,7 @@
             background-size: 100% 4px; z-index: 1000; pointer-events: none;
         }
 
+        /* LAYOUT */
         .hud {
             display: grid; grid-template-columns: 250px 1fr; grid-template-rows: 60px 1fr;
             height: 100vh; width: 100vw; gap: 10px; padding: 10px; box-sizing: border-box;
@@ -72,14 +73,8 @@
         header {
             grid-column: 1 / 3; background: rgba(10,10,10,0.85); border: 1px solid #333;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; color: var(--blood-red); font-weight: bold;
-            box-shadow: 0 0 10px rgba(255, 7, 58, 0.2);
-        }
-        .header-glitch { animation: glitch 4s infinite; position: relative; text-shadow: 0 0 5px var(--blood-red); }
-        @keyframes glitch {
-            0%, 90%, 100% { transform: translate(0); }
-            91% { transform: translate(2px, -2px); text-shadow: -2px 0 var(--toxic-green); }
-            92% { transform: translate(-2px, 2px); text-shadow: 2px 0 blue; }
+            padding: 0 20px; color: var(--cyber-blue); font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
         }
 
         aside {
@@ -92,10 +87,35 @@
 
         main {
             background: rgba(10,10,10,0.7); border: 1px solid #333;
-            padding: 20px; overflow-y: auto; overflow-x: hidden; 
+            padding: 30px; overflow-y: auto; overflow-x: hidden; 
             display: block; 
             line-height: 1.5; cursor: none; 
         }
+
+        /* --- NEW NAME DESIGN STYLING --- */
+        .title-container {
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--blood-red);
+            padding-bottom: 10px;
+            box-shadow: 0 10px 10px -10px rgba(255,7,58,0.5);
+        }
+        .cyber-title {
+            font-size: 2.8rem;
+            color: var(--toxic-green);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin: 0;
+            text-shadow: 0 0 10px rgba(0,255,0,0.6), 0 0 20px rgba(0,255,0,0.3);
+            font-weight: bold;
+        }
+        .subtitle {
+            color: var(--cyber-blue);
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin-top: 5px;
+            text-shadow: 0 0 5px rgba(0,255,255,0.5);
+        }
+        /* ------------------------------- */
 
         .prompt { color: var(--blood-red); font-weight: bold; }
         .command { color: #fff; text-shadow: 0 0 5px #fff; }
@@ -175,8 +195,8 @@
 
     <div class="hud">
         <header>
-            <div class="header-glitch">SANTHAKUMAR.DOSSIER [OPERATOR_NODE: BCU]</div>
-            <div style="color:var(--toxic-green); font-size: 12px; text-shadow: 0 0 5px var(--toxic-green);">STATUS: ENCRYPTED CONNECTION SECURED</div>
+            <div>[ CONNECTION: ENCRYPTED // NODE: BCU_SECURE ]</div>
+            <div style="color:var(--toxic-green); font-size: 12px; text-shadow: 0 0 5px var(--toxic-green);">STATUS: ONLINE</div>
         </header>
 
         <aside id="vitals">
@@ -192,13 +212,18 @@
         </aside>
 
         <main id="main-terminal">
+            
+            <div class="title-container">
+                <h1 class="cyber-title" data-value="SANTHAKUMAR PARIVALLAL">SYSTEM_INIT...</h1>
+                <div class="subtitle">DOSSIER // PENETRATION TESTER & RED TEAMER</div>
+            </div>
+
             <div style="margin-bottom: 25px;">
                 <span class="prompt">root@santha:~#</span> <span class="command">tail -f /var/log/professional_profile.decrypted</span>
             </div>
 
             <section class="data-section" id="sec-whoami">
-                <h2>[PROFILE] About Me / Objective</h2>
-                <p><span class="highlight">ALIAS:</span> Santhakumar Parivallal | <span class="highlight">TARGET ROLE:</span> Penetration Tester / Red Teamer</p>
+                <h2>[PROFILE] Objective</h2>
                 <p>I am a multi-certified Cybersecurity Professional and current MSc Cyber Security student at Birmingham City University, actively pursuing a career as a <strong>Penetration Tester</strong>. Driven by a passion for offensive security, I specialize in identifying, exploiting, and mitigating complex vulnerabilities within enterprise networks and web applications.</p>
                 <p>With hands-on experience in SOC environments and enterprise risk assessments (Deloitte, Tata Group), I bridge the gap between highly technical Red Team exploitation and high-level defensive remediation, ensuring that organizations not only uncover their weak points but effectively patch them against real-world threat actors.</p>
             </section>
@@ -303,7 +328,27 @@
     </div>
 
     <script>
-        // --- NEW MOUSE BEHAVIOR SCRIPT ---
+        // NAME DECRYPTION EFFECT
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
+        const titleElement = document.querySelector(".cyber-title");
+        let iterations = 0;
+        const targetText = titleElement.dataset.value;
+        
+        setTimeout(() => {
+            const interval = setInterval(() => {
+                titleElement.innerText = targetText.split("")
+                    .map((letter, index) => {
+                        if(index < iterations) return targetText[index];
+                        return letters[Math.floor(Math.random() * letters.length)];
+                    })
+                    .join("");
+                
+                if(iterations >= targetText.length) clearInterval(interval);
+                iterations += 1 / 3;
+            }, 30);
+        }, 500); // Starts half a second after page load
+
+        // MOUSE BEHAVIOR SCRIPT
         const cursorDot = document.getElementById('cursor-dot');
         const cursorRing = document.getElementById('cursor-ring');
         
@@ -316,7 +361,7 @@
 
         document.addEventListener('mousedown', () => {
             cursorRing.style.width = '20px'; cursorRing.style.height = '20px';
-            cursorRing.style.backgroundColor = 'rgba(0, 255, 255, 0.3)'; // Cyan flash on click
+            cursorRing.style.backgroundColor = 'rgba(0, 255, 255, 0.3)';
             cursorRing.style.borderColor = 'var(--cyber-blue)';
         });
         document.addEventListener('mouseup', () => {
@@ -325,23 +370,22 @@
             cursorRing.style.borderColor = 'var(--toxic-green)';
         });
 
-        // Hover Target Lock-On Effect
         const interactables = document.querySelectorAll('a, button, .data-section, [data-tooltip]');
         interactables.forEach(el => {
             el.addEventListener('mouseenter', () => {
                 cursorRing.style.width = '48px'; 
                 cursorRing.style.height = '48px';
                 cursorRing.style.borderColor = 'var(--blood-red)';
-                cursorRing.style.borderRadius = '10%'; // Turns into a square bracket!
-                cursorRing.style.animationDuration = '1.5s'; // Spins super fast
+                cursorRing.style.borderRadius = '10%'; 
+                cursorRing.style.animationDuration = '1.5s'; 
                 cursorRing.style.backgroundColor = 'rgba(255, 7, 58, 0.1)';
             });
             el.addEventListener('mouseleave', () => {
                 cursorRing.style.width = '36px'; 
                 cursorRing.style.height = '36px';
                 cursorRing.style.borderColor = 'var(--toxic-green)';
-                cursorRing.style.borderRadius = '50%'; // Returns to a circle
-                cursorRing.style.animationDuration = '6s'; // Returns to slow spin
+                cursorRing.style.borderRadius = '50%'; 
+                cursorRing.style.animationDuration = '6s'; 
                 cursorRing.style.backgroundColor = 'transparent';
             });
         });
@@ -447,7 +491,7 @@
                 setTimeout(streamData, 800); 
             }
         }
-        setTimeout(streamData, 1000); 
+        setTimeout(streamData, 1500); 
 
         function closeAlert() { document.getElementById('alert-overlay').style.display = 'none'; }
     </script>
