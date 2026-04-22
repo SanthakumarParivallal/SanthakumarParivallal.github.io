@@ -17,7 +17,7 @@
             background-color: var(--dark-bg);
             color: #eee;
             font-family: 'Courier New', Courier, monospace;
-            overflow-x: hidden; overflow-y: hidden;
+            overflow: hidden; /* Prevents whole page from scrolling, keeps it in the terminal */
             font-size: 14px;
             width: 100vw; height: 100vh;
             cursor: none; 
@@ -88,7 +88,8 @@
 
         main {
             background: rgba(10,10,10,0.7); border: 1px solid #333;
-            padding: 20px; overflow-y: scroll; display: flex; flex-direction: column; gap: 20px;
+            padding: 20px; overflow-y: auto; overflow-x: hidden; 
+            display: block; /* FIX: Changed to block so elements don't squish */
             line-height: 1.5; cursor: none; 
         }
 
@@ -97,16 +98,14 @@
 
         .data-section {
             border: 1px solid #222; background: rgba(0,0,0,0.6);
-            padding: 15px; border-radius: 3px; opacity: 0; transition: opacity 0.5s ease-in; 
-            position: relative; overflow: hidden;
+            padding: 15px; border-radius: 3px; opacity: 0; transition: all 0.4s ease-in-out; 
+            position: relative; margin-bottom: 25px; /* FIX: Added spacing between boxes */
         }
-        .data-section::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
-            transition: 0.5s;
+        .data-section:hover { 
+            border-color: var(--blood-red); 
+            box-shadow: 0 0 15px rgba(255,7,58,0.15); 
+            background: rgba(20,20,20,0.9);
         }
-        .data-section:hover::before { left: 100%; transition: 0.8s; }
-        .data-section:hover { border-color: var(--blood-red); box-shadow: 0 0 15px rgba(255,7,58,0.15); }
         .data-section h2 { margin-top: 0; font-size: 1.1rem; color: #fff; border-bottom: 1px solid #333; padding-bottom: 5px; }
 
         ul { list-style-type: none; padding-left: 5px; margin-top: 10px; }
@@ -189,7 +188,9 @@
         </aside>
 
         <main id="main-terminal">
-            <div><span class="prompt">root@santha:~#</span> <span class="command">tail -f /var/log/professional_profile.decrypted</span></div>
+            <div style="margin-bottom: 25px;">
+                <span class="prompt">root@santha:~#</span> <span class="command">tail -f /var/log/professional_profile.decrypted</span>
+            </div>
 
             <section class="data-section" id="sec-whoami">
                 <h2>[PROFILE] About Me / Objective</h2>
@@ -417,10 +418,12 @@
         function streamData() {
             if (currentSection < sections.length) {
                 sections[currentSection].style.opacity = 1;
-                document.getElementById('main-terminal').scrollTo({
-                    top: document.getElementById('main-terminal').scrollHeight,
-                    behavior: 'smooth'
-                });
+                
+                // Allow the element to render, then scroll to it smoothly
+                setTimeout(() => {
+                    sections[currentSection - 1].scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }, 50);
+                
                 currentSection++;
                 
                 if(currentSection === 2) {
