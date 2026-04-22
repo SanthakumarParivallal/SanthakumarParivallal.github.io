@@ -9,8 +9,7 @@
             --toxic-green: #00ff00;
             --blood-red: #ff073a;
             --cyber-blue: #00ffff;
-            --dark-bg: #000000;
-            --term-gray: #111;
+            --dark-bg: #030303;
         }
         
         body, html {
@@ -18,73 +17,96 @@
             background-color: var(--dark-bg);
             color: #eee;
             font-family: 'Courier New', Courier, monospace;
-            overflow-x: hidden;
+            overflow-x: hidden; overflow-y: hidden;
             font-size: 14px;
             width: 100vw; height: 100vh;
+            cursor: none; 
+        }
+
+        #cursor-dot {
+            position: fixed; width: 6px; height: 6px; 
+            background-color: var(--blood-red); border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none; z-index: 9999;
+            box-shadow: 0 0 10px var(--blood-red), 0 0 20px var(--blood-red);
+        }
+        #cursor-ring {
+            position: fixed; width: 30px; height: 30px;
+            border: 1px solid var(--toxic-green); border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none; z-index: 9998;
+            transition: width 0.1s, height 0.1s, top 0.1s ease-out, left 0.1s ease-out;
+            box-shadow: inset 0 0 5px rgba(0,255,0,0.5);
+        }
+
+        .hud-grid {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -2; pointer-events: none;
         }
 
         canvas#bg-canvas {
             position: fixed; top: 0; left: 0; z-index: -1;
-            width: 100%; height: 100%;
-            opacity: 0.3;
+            width: 100%; height: 100%; opacity: 0.35; pointer-events: none;
         }
 
         body::after {
             content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
             background-size: 100% 4px; z-index: 1000; pointer-events: none;
         }
 
         .hud {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            grid-template-rows: 60px 1fr;
-            height: 100vh; width: 100vw;
-            gap: 10px; padding: 10px; box-sizing: border-box;
+            display: grid; grid-template-columns: 250px 1fr; grid-template-rows: 60px 1fr;
+            height: 100vh; width: 100vw; gap: 10px; padding: 10px; box-sizing: border-box;
             position: relative; z-index: 10;
         }
 
         header {
-            grid-column: 1 / 3;
-            background: rgba(17,17,17,0.8);
-            border: 1px solid #333;
+            grid-column: 1 / 3; background: rgba(10,10,10,0.85); border: 1px solid #333;
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 20px; color: var(--blood-red); font-weight: bold;
-            text-shadow: 0 0 5px var(--blood-red);
+            box-shadow: 0 0 10px rgba(255, 7, 58, 0.2);
         }
-        .header-glitch { animation: glitch 4s infinite; position: relative; }
+        .header-glitch { animation: glitch 4s infinite; position: relative; text-shadow: 0 0 5px var(--blood-red); }
         @keyframes glitch {
-            0%, 90%, 100% { transform: translate(0); text-shadow: 0 0 5px var(--blood-red); }
+            0%, 90%, 100% { transform: translate(0); }
             91% { transform: translate(2px, -2px); text-shadow: -2px 0 var(--toxic-green); }
             92% { transform: translate(-2px, 2px); text-shadow: 2px 0 blue; }
         }
 
         aside {
-            background: rgba(17,17,17,0.8);
-            border: 1px solid #333;
-            padding: 15px; font-size: 12px;
-            display: flex; flex-direction: column; gap: 10px;
+            background: rgba(10,10,10,0.85); border: 1px solid #333;
+            padding: 15px; font-size: 12px; display: flex; flex-direction: column; gap: 10px;
             color: var(--toxic-green); overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0,0,0,1);
         }
         .vital-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         main {
-            background: rgba(17,17,17,0.6);
-            border: 1px solid #333;
-            padding: 20px; overflow-y: scroll;
-            display: flex; flex-direction: column; gap: 20px;
-            line-height: 1.5;
+            background: rgba(10,10,10,0.7); border: 1px solid #333;
+            padding: 20px; overflow-y: scroll; display: flex; flex-direction: column; gap: 20px;
+            line-height: 1.5; cursor: none; 
         }
 
         .prompt { color: var(--blood-red); font-weight: bold; }
         .command { color: #fff; text-shadow: 0 0 5px #fff; }
 
         .data-section {
-            border: 1px solid #222; background: rgba(0,0,0,0.5);
-            padding: 15px; border-radius: 3px;
-            opacity: 0; transition: opacity 0.5s ease-in; 
+            border: 1px solid #222; background: rgba(0,0,0,0.6);
+            padding: 15px; border-radius: 3px; opacity: 0; transition: opacity 0.5s ease-in; 
+            position: relative; overflow: hidden;
         }
-        .data-section:hover { border-color: var(--blood-red); box-shadow: 0 0 10px rgba(255,7,58,0.2); }
+        .data-section::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: 0.5s;
+        }
+        .data-section:hover::before { left: 100%; transition: 0.8s; }
+        .data-section:hover { border-color: var(--blood-red); box-shadow: 0 0 15px rgba(255,7,58,0.15); }
         .data-section h2 { margin-top: 0; font-size: 1.1rem; color: #fff; border-bottom: 1px solid #333; padding-bottom: 5px; }
 
         ul { list-style-type: none; padding-left: 5px; margin-top: 10px; }
@@ -95,44 +117,37 @@
         .sub-list li { margin-bottom: 6px; }
         .sub-list li::before { content: ":: "; color: var(--toxic-green); }
 
-        a { color: var(--toxic-green); text-decoration: none; border-bottom: 1px dotted var(--toxic-green); }
+        a { color: var(--toxic-green); text-decoration: none; border-bottom: 1px dashed var(--toxic-green); cursor: none;}
         a:hover { background-color: var(--toxic-green); color: #000; }
         
         .highlight { color: var(--cyber-blue); font-weight: bold; }
-        
-        [data-tooltip] { position: relative; cursor: help; color: var(--toxic-green); border-bottom: 1px dashed var(--toxic-green);}
+
+        [data-tooltip] { position: relative; color: var(--toxic-green); border-bottom: 1px dotted var(--toxic-green); cursor: none;}
         [data-tooltip]::after {
-            content: attr(data-tooltip);
-            position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
-            background: rgba(0,255,255,0.9); color: #000;
-            padding: 5px 10px; border-radius: 3px; white-space: nowrap;
-            font-size: 11px; font-weight: bold;
-            opacity: 0; pointer-events: none; transition: 0.2s; z-index: 100;
+            content: attr(data-tooltip); position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
+            background: rgba(0,255,255,0.9); color: #000; padding: 5px 10px; border-radius: 3px; white-space: nowrap;
+            font-size: 11px; font-weight: bold; opacity: 0; pointer-events: none; transition: 0.2s; z-index: 100;
         }
         [data-tooltip]:hover::after { opacity: 1; bottom: 130%; }
 
         #alert-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.9); z-index: 2000;
-            display: none; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.85); z-index: 2000;
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px);
         }
         #alert-box {
-            width: 450px; padding: 30px;
-            background: #000; border: 3px solid var(--blood-red);
-            text-align: center; box-shadow: 0 0 30px var(--blood-red);
-            animation: pulse-red 1s infinite alternate;
+            width: 450px; padding: 30px; background: #050505; border: 2px solid var(--blood-red);
+            text-align: center; animation: pulse-red 1s infinite alternate;
         }
         #alert-box h1 { color: var(--blood-red); font-size: 2em; margin: 0 0 15px 0; text-transform: uppercase;}
         #alert-box p { color: #fff; margin-bottom: 25px; font-size: 1.1em; line-height: 1.4; }
         .alert-btn {
-            background: var(--blood-red); color: #000;
-            border: none; padding: 10px 20px;
-            font-family: inherit; font-weight: bold; text-transform: uppercase;
-            cursor: pointer; transition: 0.2s;
+            background: var(--blood-red); color: #000; border: none; padding: 10px 20px;
+            font-family: inherit; font-weight: bold; text-transform: uppercase; transition: 0.2s; cursor: none;
         }
-        .alert-btn:hover { background: #fff; box-shadow: 0 0 10px #fff; }
+        .alert-btn:hover { background: #fff; box-shadow: 0 0 15px #fff; }
 
-        @keyframes pulse-red { 0% { box-shadow: 0 0 10px var(--blood-red); } 100% { box-shadow: 0 0 40px var(--blood-red); } }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 10px rgba(255,7,58,0.5); } 100% { box-shadow: 0 0 30px rgba(255,7,58,0.8); } }
 
         main::-webkit-scrollbar { width: 5px; }
         main::-webkit-scrollbar-track { background: #000; }
@@ -141,6 +156,10 @@
 </head>
 <body>
 
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+
+    <div class="hud-grid"></div>
     <canvas id="bg-canvas"></canvas>
 
     <div id="alert-overlay">
@@ -154,7 +173,7 @@
     <div class="hud">
         <header>
             <div class="header-glitch">SANTHAKUMAR.DOSSIER [OPERATOR_NODE: BCU]</div>
-            <div style="color:var(--toxic-green); font-size: 12px;">STATUS: ENCRYPTED CONNECTION SECURED</div>
+            <div style="color:var(--toxic-green); font-size: 12px; text-shadow: 0 0 5px var(--toxic-green);">STATUS: ENCRYPTED CONNECTION SECURED</div>
         </header>
 
         <aside id="vitals">
@@ -170,14 +189,13 @@
         </aside>
 
         <main id="main-terminal">
-            <div>
-                <span class="prompt">root@santha:~#</span> <span class="command">tail -f /var/log/professional_profile.decrypted</span>
-            </div>
+            <div><span class="prompt">root@santha:~#</span> <span class="command">tail -f /var/log/professional_profile.decrypted</span></div>
 
             <section class="data-section" id="sec-whoami">
-                <h2>[PROFILE] Executive Summary</h2>
-                <p><span class="highlight">ALIAS:</span> Santhakumar Parivallal | <span class="highlight">CLASS:</span> Offensive Security & Risk Management Specialist</p>
-                <p>Multi-certified Cybersecurity Professional currently advancing expertise through an MSc in Cyber Security at Birmingham City University. Demonstrated success in enterprise environments (Deloitte, Tata Group) bridging the gap between highly technical Red Team operations and high-level ISO 27001 compliance. Adept at simulating sophisticated, real-world cyber threats to expose infrastructure vulnerabilities, coupled with the strategic acumen to engineer robust, framework-aligned remediation strategies.</p>
+                <h2>[PROFILE] About Me / Objective</h2>
+                <p><span class="highlight">ALIAS:</span> Santhakumar Parivallal | <span class="highlight">TARGET ROLE:</span> Penetration Tester / Red Teamer</p>
+                <p>I am a multi-certified Cybersecurity Professional and current MSc Cyber Security student at Birmingham City University, actively pursuing a career as a <strong>Penetration Tester</strong>. Driven by a passion for offensive security, I specialize in identifying, exploiting, and mitigating complex vulnerabilities within enterprise networks and web applications.</p>
+                <p>With hands-on experience in SOC environments and enterprise risk assessments (Deloitte, Tata Group), I bridge the gap between highly technical Red Team exploitation and high-level defensive remediation, ensuring that organizations not only uncover their weak points but effectively patch them against real-world threat actors.</p>
             </section>
 
             <section class="data-section" id="sec-exp">
@@ -185,26 +203,19 @@
                 <ul>
                     <li><strong>Deloitte</strong> | Cybersecurity Intern <span style="float:right; color:#888;">Dec 2025</span>
                         <ul class="sub-list">
-                            <li>Conducted comprehensive risk assessments against enterprise-level security frameworks, actively evaluating and scoring organizational risk postures.</li>
+                            <li>Conducted comprehensive risk assessments against enterprise-level security frameworks, actively evaluating organizational risk postures.</li>
                             <li>Collaborated with internal defense teams to map potential infrastructure vulnerabilities, contributing critical data to executive security briefings.</li>
                         </ul>
                     </li>
                     <li><strong>Tata Group</strong> | Cybersecurity Analyst Intern <span style="float:right; color:#888;">Dec 2025</span>
                         <ul class="sub-list">
-                            <li>Executed advanced analytical tasks within a SOC environment, focusing on continuous threat monitoring and incident response simulations.</li>
-                            <li>Translated complex, data-driven security insights into actionable enterprise hardening measures, directly improving corporate network resilience.</li>
+                            <li>Executed advanced analytical tasks focusing on continuous threat monitoring and incident response simulations.</li>
+                            <li>Translated complex, data-driven security insights into actionable enterprise hardening measures.</li>
                         </ul>
                     </li>
                     <li><strong>Mastercard</strong> | Cybersecurity Job Simulation <span style="float:right; color:#888;">Dec 2025</span>
                         <ul class="sub-list">
                             <li>Architected and deployed highly targeted phishing email simulations utilizing social engineering techniques to audit organizational security awareness.</li>
-                            <li>Analyzed simulation telemetry to identify workforce vulnerabilities, applying design thinking to develop targeted, mitigation-focused training modules.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Invoking System Pvt. Ltd.</strong> | Full Stack Developer Intern <span style="float:right; color:#888;">Feb 2024 - Aug 2024</span>
-                        <ul class="sub-list">
-                            <li>Engineered and secured full-stack web applications utilizing React.js and JavaScript, integrating foundational secure coding practices.</li>
-                            <li>Optimized application performance and sanitized data inputs to enhance user experience while minimizing surface-level attack vectors.</li>
                         </ul>
                     </li>
                 </ul>
@@ -213,10 +224,10 @@
             <section class="data-section" id="sec-projects">
                 <h2>[RESEARCH] Advanced Threat Simulations & Academia</h2>
                 <ul>
-                    <li><strong>MSc Dissertation / Capstone Research</strong> | Birmingham City University
+                    <li><strong>MSc Capstone Research</strong> | Birmingham City University
                         <ul class="sub-list">
-                            <li>Currently investigating advanced vectors in [Insert Topic Here, e.g., Cloud Infrastructure Exploitation / Active Directory Compromise].</li>
-                            <li>Focusing on the intersection of offensive methodologies and automated detection systems.</li>
+                            <li><strong>Topic:</strong> Advanced Evasion Techniques in Modern Penetration Testing.</li>
+                            <li>Focusing on the intersection of offensive methodologies, payload obfuscation, and bypassing endpoint detection systems (EDR) in enterprise Active Directory environments.</li>
                         </ul>
                     </li>
                     <li><strong>Red Team Lab Deployments</strong>
@@ -227,21 +238,29 @@
                 </ul>
             </section>
 
+            <section class="data-section" id="sec-achievements">
+                <h2>[HONORS] Tactical Engagements & Awards</h2>
+                <ul>
+                    <li><span class="highlight">1st Place Winner</span> | BCU Cybersecurity Society Hackathon
+                        <ul class="sub-list">
+                            <li>Secured 1st Place out of competing teams in a live, high-pressure cybersecurity challenge hosted at STEAMhouse.</li>
+                            <li>Demonstrated rapid problem-solving, advanced offensive methodologies, and practical exploit deployment under strict time constraints.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
             <section class="data-section" id="sec-skills">
                 <h2>[ARSENAL] Technical Competencies</h2>
                 <ul>
-                    <li><strong>Offensive Operations:</strong> Red Team Operations Management, Penetration Testing, Exploitation & Post-Exploitation, Social Engineering, OSINT.</li>
-                    <li><strong>Defensive & Governance:</strong> ISO/IEC 27001 Lead Auditing, Vulnerability Assessment, Threat Hunting, Compliance Management.</li>
-                    <li><strong>Frameworks & Standards:</strong> MITRE ATT&CK, NIST Cybersecurity Framework, OWASP Top 10.</li>
+                    <li><strong>Offensive Operations:</strong> Penetration Testing, Web Application Exploitation, Red Team Operations, Social Engineering, OSINT.</li>
+                    <li><strong>Defensive & Governance:</strong> ISO/IEC 27001 Lead Auditing, Vulnerability Assessment, Threat Hunting.</li>
                     <li><strong>Core Tools:</strong> 
                         <span data-tooltip="Network Scanner & Enum">Nmap</span>, 
                         <span data-tooltip="Exploitation Framework">Metasploit</span>, 
                         <span data-tooltip="Web Proxy / Vuln Scanner">Burp Suite</span>, 
                         <span data-tooltip="Packet Analyzer">Wireshark</span>, 
-                        <span data-tooltip="SIEM">Splunk</span>,
-                        <span data-tooltip="Cloud Security & Compliance">Qualys</span>,
-                        <span data-tooltip="Reverse Engineering">Ghidra</span>,
-                        <span data-tooltip="Digital Forensics">Autopsy</span>
+                        <span data-tooltip="SIEM">Splunk</span>
                     </li>
                 </ul>
             </section>
@@ -251,9 +270,7 @@
                 <ul>
                     <li><span class="highlight">ISO/IEC 27001:2022 Lead Auditor</span> - Mastermind (Expected Jan 2026)</li>
                     <li><span class="highlight">Certified Cybersecurity Educator Professional (CCEP) Red Team</span> - Red Team Leaders (Expected Jan 2026)</li>
-                    <li><span class="highlight">Ethical Hacking Essentials (EHE)</span> - EC-Council (Expected Jan 2026)</li>
                     <li><span class="highlight">Certified Red Team Ops Management (CRTOM)</span> - Red Team Leaders (Expected Dec 2025)</li>
-                    <li><span class="highlight">Digital Forensics & Incident Investigation</span> - Red Team Leaders (Expected Feb 2026)</li>
                 </ul>
             </section>
 
@@ -281,6 +298,39 @@
     </div>
 
     <script>
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorRing = document.getElementById('cursor-ring');
+        
+        window.addEventListener('mousemove', (e) => {
+            cursorDot.style.left = e.clientX + 'px';
+            cursorDot.style.top = e.clientY + 'px';
+            cursorRing.style.left = e.clientX + 'px';
+            cursorRing.style.top = e.clientY + 'px';
+        });
+
+        document.addEventListener('mousedown', () => {
+            cursorRing.style.width = '20px'; cursorRing.style.height = '20px';
+            cursorRing.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+        });
+        document.addEventListener('mouseup', () => {
+            cursorRing.style.width = '30px'; cursorRing.style.height = '30px';
+            cursorRing.style.backgroundColor = 'transparent';
+        });
+
+        const interactables = document.querySelectorAll('a, button, .data-section, [data-tooltip]');
+        interactables.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorRing.style.width = '50px'; cursorRing.style.height = '50px';
+                cursorRing.style.borderColor = 'var(--blood-red)';
+                cursorRing.style.boxShadow = 'inset 0 0 10px rgba(255,7,58,0.5)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorRing.style.width = '30px'; cursorRing.style.height = '30px';
+                cursorRing.style.borderColor = 'var(--toxic-green)';
+                cursorRing.style.boxShadow = 'inset 0 0 5px rgba(0,255,0,0.5)';
+            });
+        });
+
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let width, height, points;
@@ -290,22 +340,36 @@
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
             points = [];
-            for (let i = 0; i < 60; i++) {
+            for (let i = 0; i < 40; i++) {
                 points.push({
                     x: Math.random() * width, y: Math.random() * height,
-                    vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2,
+                    vx: (Math.random() - 0.5) * 1.5, vy: (Math.random() - 0.5) * 1.5,
                     size: Math.random() * 2 + 1
                 });
             }
         }
 
-        window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
         window.addEventListener('resize', init);
+
+        const hexChars = "0123456789ABCDEF".split("");
+        const fontSize = 14;
+        let drops = [];
+        for (let x = 0; x < window.innerWidth / fontSize; x++) drops[x] = 1;
 
         function drawBg() {
             ctx.clearRect(0, 0, width, height);
-            ctx.strokeStyle = 'rgba(255, 7, 58, 0.15)'; 
-            ctx.fillStyle = 'rgba(255, 7, 58, 0.5)';
+
+            ctx.fillStyle = "rgba(0, 255, 0, 0.15)";
+            ctx.font = fontSize + "px monospace";
+            for (let i = 0; i < drops.length; i++) {
+                const text = hexChars[Math.floor(Math.random() * hexChars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.98) drops[i] = 0;
+                drops[i] += 0.5;
+            }
+
+            ctx.strokeStyle = 'rgba(255, 7, 58, 0.2)'; 
+            ctx.fillStyle = 'rgba(255, 7, 58, 0.6)';
             ctx.lineWidth = 0.5;
 
             let dx = (mouseX - width/2) * 0.05;
@@ -316,23 +380,18 @@
                 if (p.x < 0 || p.x > width) p.vx *= -1;
                 if (p.y < 0 || p.y > height) p.vy *= -1;
 
-                letpx = p.x + dx;
-                letpy = p.y + dy;
+                let px = p.x + dx;
+                let py = p.y + dy;
 
                 ctx.beginPath();
-                ctx.arc(letpx, letpy, p.size, 0, Math.PI * 2);
+                ctx.arc(px, py, p.size, 0, Math.PI * 2);
                 ctx.fill();
 
                 for (let j = i + 1; j < points.length; j++) {
                     let p2 = points[j];
-                    let p2x = p2.x + dx;
-                    let p2y = p2.y + dy;
-                    let dist = Math.sqrt(Math.pow(letpx - p2x, 2) + Math.pow(letpy - p2y, 2));
-                    if (dist < 150) {
-                        ctx.beginPath();
-                        ctx.moveTo(letpx, letpy);
-                        ctx.lineTo(p2x, p2y);
-                        ctx.stroke();
+                    let dist = Math.sqrt(Math.pow(px - (p2.x + dx), 2) + Math.pow(py - (p2.y + dy), 2));
+                    if (dist < 180) {
+                        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(p2.x + dx, p2.y + dy); ctx.stroke();
                     }
                 }
             });
@@ -345,9 +404,8 @@
             document.getElementById('cpu').innerText = `CPU LOAD: ${(30 + Math.random() * 60).toFixed(1)}%`;
             document.getElementById('ram').innerText = `MEM LOAD: ${(Math.random() * 16).toFixed(1)} GB / 16GB`;
             
-            let hex = '0123456789ABCDEF';
             let packet = '';
-            for(let i=0; i<16; i++) packet += hex[Math.floor(Math.random()*16)];
+            for(let i=0; i<16; i++) packet += hexChars[Math.floor(Math.random()*16)];
             let stream = document.getElementById('stream-data');
             stream.innerHTML = `> ETH0: [${packet}]<br>` + stream.innerHTML;
             if(stream.innerHTML.length > 800) stream.innerHTML = stream.innerHTML.substring(0, 800);
@@ -372,7 +430,6 @@
                 setTimeout(streamData, 800); 
             }
         }
-        
         setTimeout(streamData, 1000); 
 
         function closeAlert() { document.getElementById('alert-overlay').style.display = 'none'; }
