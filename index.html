@@ -9,12 +9,14 @@
             --toxic-green: #00ff00;
             --blood-red: #ff073a;
             --cyber-blue: #00ffff;
-            --dark-bg: #030303;
+            /* Changed to a deep, rich midnight blue-black instead of pure black */
+            --dark-bg: #050a14; 
         }
         
         body, html {
             margin: 0; padding: 0;
-            background-color: var(--dark-bg);
+            /* Added a glowing radial gradient to the background so it's not flat */
+            background: radial-gradient(circle at 50% 50%, #111a2a 0%, var(--dark-bg) 100%);
             color: #eee;
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden; 
@@ -42,24 +44,27 @@
         }
         @keyframes spinTarget { 100% { transform: rotate(360deg); } }
 
-        /* BACKGROUNDS */
+        /* BRIGHTER BACKGROUND GRAPHICS */
         .hud-grid {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            /* Changed grid to cyan and made it more visible */
             background-image: 
-                linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px);
+                linear-gradient(rgba(0, 255, 255, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.06) 1px, transparent 1px);
             background-size: 40px 40px;
             z-index: -2; pointer-events: none;
         }
 
         canvas#bg-canvas {
             position: fixed; top: 0; left: 0; z-index: -1;
-            width: 100%; height: 100%; opacity: 0.35; pointer-events: none;
+            width: 100%; height: 100%; 
+            opacity: 0.75; /* Increased opacity massively so graphics pop */
+            pointer-events: none;
         }
 
         body::after {
             content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
             background-size: 100% 4px; z-index: 1000; pointer-events: none;
         }
 
@@ -71,14 +76,14 @@
         }
 
         header {
-            grid-column: 1 / 3; background: rgba(10,10,10,0.85); border: 1px solid #333;
+            grid-column: 1 / 3; background: rgba(8, 12, 18, 0.85); border: 1px solid #333;
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 20px; color: var(--cyber-blue); font-weight: bold;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.15);
         }
 
         aside {
-            background: rgba(10,10,10,0.85); border: 1px solid #333;
+            background: rgba(8, 12, 18, 0.85); border: 1px solid #333;
             padding: 15px; font-size: 12px; display: flex; flex-direction: column; gap: 10px;
             color: var(--toxic-green); overflow: hidden;
             box-shadow: inset 0 0 15px rgba(0,0,0,1);
@@ -86,13 +91,15 @@
         .vital-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         main {
-            background: rgba(10,10,10,0.7); border: 1px solid #333;
+            /* Lightened the main box background slightly to fit the new theme */
+            background: rgba(12, 16, 24, 0.75); border: 1px solid #333;
             padding: 30px; overflow-y: auto; overflow-x: hidden; 
             display: block; 
             line-height: 1.5; cursor: none; 
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
         }
 
-        /* --- NEW NAME DESIGN STYLING --- */
+        /* NAME DESIGN STYLING */
         .title-container {
             margin-bottom: 30px;
             border-bottom: 2px solid var(--blood-red);
@@ -115,22 +122,21 @@
             margin-top: 5px;
             text-shadow: 0 0 5px rgba(0,255,255,0.5);
         }
-        /* ------------------------------- */
 
         .prompt { color: var(--blood-red); font-weight: bold; }
         .command { color: #fff; text-shadow: 0 0 5px #fff; }
 
         .data-section {
-            border: 1px solid #222; background: rgba(0,0,0,0.6);
+            border: 1px solid #333; background: rgba(5, 8, 12, 0.8);
             padding: 15px; border-radius: 3px; opacity: 0; transition: all 0.4s ease-in-out; 
             position: relative; margin-bottom: 25px; 
         }
         .data-section:hover { 
             border-color: var(--blood-red); 
-            box-shadow: 0 0 15px rgba(255,7,58,0.15); 
-            background: rgba(20,20,20,0.9);
+            box-shadow: 0 0 20px rgba(255,7,58,0.2); 
+            background: rgba(20, 25, 35, 0.9);
         }
-        .data-section h2 { margin-top: 0; font-size: 1.1rem; color: #fff; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .data-section h2 { margin-top: 0; font-size: 1.1rem; color: #fff; border-bottom: 1px solid #444; padding-bottom: 5px; }
 
         ul { list-style-type: none; padding-left: 5px; margin-top: 10px; }
         ul li { margin-bottom: 8px; }
@@ -156,10 +162,10 @@
         #alert-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0,0,0,0.85); z-index: 2000;
-            display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px);
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px);
         }
         #alert-box {
-            width: 450px; padding: 30px; background: #050505; border: 2px solid var(--blood-red);
+            width: 450px; padding: 30px; background: #080c14; border: 2px solid var(--blood-red);
             text-align: center; animation: pulse-red 1s infinite alternate;
         }
         #alert-box h1 { color: var(--blood-red); font-size: 2em; margin: 0 0 15px 0; text-transform: uppercase;}
@@ -200,15 +206,15 @@
         </header>
 
         <aside id="vitals">
-            <h3 style="margin-top:0; color:#fff; border-bottom: 1px solid #333; padding-bottom: 5px;">SYSTEM VITALS</h3>
+            <h3 style="margin-top:0; color:#fff; border-bottom: 1px solid #444; padding-bottom: 5px;">SYSTEM VITALS</h3>
             <div class="vital-line">IP: [MASKED_RELAY]</div>
             <div class="vital-line">LOC: 52.4862° N, 1.8904° W</div>
             <div id="traffic" style="color:var(--cyber-blue);">NET TRAFFIC: </div>
             <div id="cpu">CPU LOAD: </div>
             <div id="ram">MEM LOAD: </div>
             <br>
-            <h3 style="color:#fff; border-bottom: 1px solid #333; padding-bottom: 5px;">LIVE PACKET STREAM</h3>
-            <div id="stream-data" style="font-size: 10px; font-family: monospace; opacity: 0.8;"></div>
+            <h3 style="color:#fff; border-bottom: 1px solid #444; padding-bottom: 5px;">LIVE PACKET STREAM</h3>
+            <div id="stream-data" style="font-size: 10px; font-family: monospace; opacity: 0.9;"></div>
         </aside>
 
         <main id="main-terminal">
@@ -346,7 +352,7 @@
                 if(iterations >= targetText.length) clearInterval(interval);
                 iterations += 1 / 3;
             }, 30);
-        }, 500); // Starts half a second after page load
+        }, 500); 
 
         // MOUSE BEHAVIOR SCRIPT
         const cursorDot = document.getElementById('cursor-dot');
@@ -390,7 +396,7 @@
             });
         });
 
-        // BACKGROUND SCRIPT
+        // ENHANCED BACKGROUND GRAPHICS SCRIPT
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let width, height, points;
@@ -400,11 +406,11 @@
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
             points = [];
-            for (let i = 0; i < 40; i++) {
+            for (let i = 0; i < 45; i++) {
                 points.push({
                     x: Math.random() * width, y: Math.random() * height,
-                    vx: (Math.random() - 0.5) * 1.5, vy: (Math.random() - 0.5) * 1.5,
-                    size: Math.random() * 2 + 1
+                    vx: (Math.random() - 0.5) * 1.8, vy: (Math.random() - 0.5) * 1.8,
+                    size: Math.random() * 2.5 + 1
                 });
             }
         }
@@ -419,7 +425,8 @@
         function drawBg() {
             ctx.clearRect(0, 0, width, height);
 
-            ctx.fillStyle = "rgba(0, 255, 0, 0.15)";
+            // Brighter Hex Rain
+            ctx.fillStyle = "rgba(0, 255, 0, 0.25)";
             ctx.font = fontSize + "px monospace";
             for (let i = 0; i < drops.length; i++) {
                 const text = hexChars[Math.floor(Math.random() * hexChars.length)];
@@ -428,10 +435,7 @@
                 drops[i] += 0.5;
             }
 
-            ctx.strokeStyle = 'rgba(255, 7, 58, 0.2)'; 
-            ctx.fillStyle = 'rgba(255, 7, 58, 0.6)';
-            ctx.lineWidth = 0.5;
-
+            // Cyber-Blue dots with Blood-Red lines
             let dx = (mouseX - width/2) * 0.05;
             let dy = (mouseY - height/2) * 0.05;
 
@@ -443,10 +447,15 @@
                 let px = p.x + dx;
                 let py = p.y + dy;
 
+                // Draw Blue Dots
                 ctx.beginPath();
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.8)';
                 ctx.arc(px, py, p.size, 0, Math.PI * 2);
                 ctx.fill();
 
+                // Draw Red Lines
+                ctx.strokeStyle = 'rgba(255, 7, 58, 0.35)'; 
+                ctx.lineWidth = 0.8;
                 for (let j = i + 1; j < points.length; j++) {
                     let p2 = points[j];
                     let dist = Math.sqrt(Math.pow(px - (p2.x + dx), 2) + Math.pow(py - (p2.y + dy), 2));
@@ -459,6 +468,7 @@
         }
         init(); drawBg();
 
+        // VITALS TICKER
         setInterval(() => {
             document.getElementById('traffic').innerText = `NET TRAFFIC: ${(Math.random() * 500).toFixed(2)} KB/s`;
             document.getElementById('cpu').innerText = `CPU LOAD: ${(30 + Math.random() * 60).toFixed(1)}%`;
@@ -471,6 +481,7 @@
             if(stream.innerHTML.length > 800) stream.innerHTML = stream.innerHTML.substring(0, 800);
         }, 800);
 
+        // SEQUENTIAL LOADING
         const sections = document.querySelectorAll('.data-section');
         let currentSection = 0;
 
@@ -491,7 +502,7 @@
                 setTimeout(streamData, 800); 
             }
         }
-        setTimeout(streamData, 1500); 
+        setTimeout(streamData, 2000); // Waits for name to decrypt before streaming resume
 
         function closeAlert() { document.getElementById('alert-overlay').style.display = 'none'; }
     </script>
