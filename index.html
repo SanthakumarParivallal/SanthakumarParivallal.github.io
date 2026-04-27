@@ -9,13 +9,12 @@
             --toxic-green: #00ff00;
             --blood-red: #ff073a;
             --cyber-blue: #00ffff;
-            /* Changed to a deep, rich midnight blue-black instead of pure black */
             --dark-bg: #050a14; 
+            --terminal-gray: #1a1a1a;
         }
         
         body, html {
             margin: 0; padding: 0;
-            /* Added a glowing radial gradient to the background so it's not flat */
             background: radial-gradient(circle at 50% 50%, #111a2a 0%, var(--dark-bg) 100%);
             color: #eee;
             font-family: 'Courier New', Courier, monospace;
@@ -23,6 +22,15 @@
             font-size: 14px;
             width: 100vw; height: 100vh;
             cursor: none; 
+        }
+
+        /* CRT SCANLINE EFFECT */
+        .crt-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px; z-index: 900; pointer-events: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
         }
 
         /* CUSTOM MOUSE */
@@ -47,7 +55,6 @@
         /* BRIGHTER BACKGROUND GRAPHICS */
         .hud-grid {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            /* Changed grid to cyan and made it more visible */
             background-image: 
                 linear-gradient(rgba(0, 255, 255, 0.06) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 255, 255, 0.06) 1px, transparent 1px);
@@ -58,19 +65,13 @@
         canvas#bg-canvas {
             position: fixed; top: 0; left: 0; z-index: -1;
             width: 100%; height: 100%; 
-            opacity: 0.75; /* Increased opacity massively so graphics pop */
+            opacity: 0.75; 
             pointer-events: none;
-        }
-
-        body::after {
-            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
-            background-size: 100% 4px; z-index: 1000; pointer-events: none;
         }
 
         /* LAYOUT */
         .hud {
-            display: grid; grid-template-columns: 250px 1fr; grid-template-rows: 60px 1fr;
+            display: grid; grid-template-columns: 280px 1fr; grid-template-rows: 60px 1fr;
             height: 100vh; width: 100vw; gap: 10px; padding: 10px; box-sizing: border-box;
             position: relative; z-index: 10;
         }
@@ -90,52 +91,63 @@
         }
         .vital-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+        /* SIDEBAR NAVIGATION */
+        .nav-links { margin-top: 15px; border-top: 1px dashed #444; padding-top: 15px; }
+        .nav-btn {
+            display: block; width: 100%; text-align: left; background: none; border: 1px solid #333;
+            color: #aaa; padding: 8px; margin-bottom: 5px; font-family: inherit; font-size: 11px;
+            cursor: none; transition: 0.2s; text-transform: uppercase;
+        }
+        .nav-btn:hover {
+            background: rgba(0, 255, 255, 0.1); border-color: var(--cyber-blue); color: #fff;
+            box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.2);
+            padding-left: 15px;
+        }
+
         main {
-            /* Lightened the main box background slightly to fit the new theme */
             background: rgba(12, 16, 24, 0.75); border: 1px solid #333;
-            padding: 30px; overflow-y: auto; overflow-x: hidden; 
+            padding: 30px; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
             display: block; 
             line-height: 1.5; cursor: none; 
             box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
         }
 
+        /* CONTROL PANEL BUTTONS */
+        .control-panel {
+            display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;
+            padding: 15px; background: rgba(5, 8, 12, 0.9); border: 1px solid #444;
+            border-left: 3px solid var(--blood-red);
+        }
+        .action-btn {
+            background: transparent; border: 1px solid var(--toxic-green); color: var(--toxic-green);
+            padding: 10px 20px; font-family: inherit; font-weight: bold; cursor: none;
+            text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s;
+            position: relative; overflow: hidden;
+        }
+        .action-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.2), transparent);
+            transition: all 0.4s;
+        }
+        .action-btn:hover::before { left: 100%; }
+        .action-btn:hover {
+            background: var(--toxic-green); color: #000; box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        }
+        .action-btn.download { border-color: var(--cyber-blue); color: var(--cyber-blue); }
+        .action-btn.download:hover { background: var(--cyber-blue); color: #000; box-shadow: 0 0 15px rgba(0, 255, 255, 0.5); }
+        .action-btn.warning { border-color: var(--blood-red); color: var(--blood-red); }
+        .action-btn.warning:hover { background: var(--blood-red); color: #fff; box-shadow: 0 0 15px rgba(255, 7, 58, 0.5); }
+
         /* NAME DESIGN STYLING */
-        .title-container {
-            margin-bottom: 30px;
-            border-bottom: 2px solid var(--blood-red);
-            padding-bottom: 10px;
-            box-shadow: 0 10px 10px -10px rgba(255,7,58,0.5);
-        }
-        .cyber-title {
-            font-size: 2.8rem;
-            color: var(--toxic-green);
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            margin: 0;
-            text-shadow: 0 0 10px rgba(0,255,0,0.6), 0 0 20px rgba(0,255,0,0.3);
-            font-weight: bold;
-        }
-        .subtitle {
-            color: var(--cyber-blue);
-            font-size: 1rem;
-            letter-spacing: 2px;
-            margin-top: 5px;
-            text-shadow: 0 0 5px rgba(0,255,255,0.5);
-        }
+        .title-container { margin-bottom: 20px; border-bottom: 2px solid var(--blood-red); padding-bottom: 10px; box-shadow: 0 10px 10px -10px rgba(255,7,58,0.5); }
+        .cyber-title { font-size: 2.8rem; color: var(--toxic-green); text-transform: uppercase; letter-spacing: 4px; margin: 0; text-shadow: 0 0 10px rgba(0,255,0,0.6), 0 0 20px rgba(0,255,0,0.3); font-weight: bold; }
+        .subtitle { color: var(--cyber-blue); font-size: 1rem; letter-spacing: 2px; margin-top: 5px; text-shadow: 0 0 5px rgba(0,255,255,0.5); }
 
         .prompt { color: var(--blood-red); font-weight: bold; }
         .command { color: #fff; text-shadow: 0 0 5px #fff; }
 
-        .data-section {
-            border: 1px solid #333; background: rgba(5, 8, 12, 0.8);
-            padding: 15px; border-radius: 3px; opacity: 0; transition: all 0.4s ease-in-out; 
-            position: relative; margin-bottom: 25px; 
-        }
-        .data-section:hover { 
-            border-color: var(--blood-red); 
-            box-shadow: 0 0 20px rgba(255,7,58,0.2); 
-            background: rgba(20, 25, 35, 0.9);
-        }
+        .data-section { border: 1px solid #333; background: rgba(5, 8, 12, 0.8); padding: 15px; border-radius: 3px; opacity: 0; transition: all 0.4s ease-in-out; position: relative; margin-bottom: 25px; }
+        .data-section:hover { border-color: var(--blood-red); box-shadow: 0 0 20px rgba(255,7,58,0.2); background: rgba(20, 25, 35, 0.9); }
         .data-section h2 { margin-top: 0; font-size: 1.1rem; color: #fff; border-bottom: 1px solid #444; padding-bottom: 5px; }
 
         ul { list-style-type: none; padding-left: 5px; margin-top: 10px; }
@@ -164,16 +176,10 @@
             background: rgba(0,0,0,0.85); z-index: 2000;
             display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px);
         }
-        #alert-box {
-            width: 450px; padding: 30px; background: #080c14; border: 2px solid var(--blood-red);
-            text-align: center; animation: pulse-red 1s infinite alternate;
-        }
+        #alert-box { width: 450px; padding: 30px; background: #080c14; border: 2px solid var(--blood-red); text-align: center; animation: pulse-red 1s infinite alternate; }
         #alert-box h1 { color: var(--blood-red); font-size: 2em; margin: 0 0 15px 0; text-transform: uppercase;}
         #alert-box p { color: #fff; margin-bottom: 25px; font-size: 1.1em; line-height: 1.4; }
-        .alert-btn {
-            background: var(--blood-red); color: #000; border: none; padding: 10px 20px;
-            font-family: inherit; font-weight: bold; text-transform: uppercase; transition: 0.2s; cursor: none;
-        }
+        .alert-btn { background: var(--blood-red); color: #000; border: none; padding: 10px 20px; font-family: inherit; font-weight: bold; text-transform: uppercase; transition: 0.2s; cursor: none; }
         .alert-btn:hover { background: #fff; box-shadow: 0 0 15px #fff; }
 
         @keyframes pulse-red { 0% { box-shadow: 0 0 10px rgba(255,7,58,0.5); } 100% { box-shadow: 0 0 30px rgba(255,7,58,0.8); } }
@@ -185,6 +191,7 @@
 </head>
 <body>
 
+    <div class="crt-overlay" id="crt-lines"></div>
     <div id="cursor-dot"></div>
     <div id="cursor-ring"></div>
 
@@ -212,6 +219,17 @@
             <div id="traffic" style="color:var(--cyber-blue);">NET TRAFFIC: </div>
             <div id="cpu">CPU LOAD: </div>
             <div id="ram">MEM LOAD: </div>
+            
+            <div class="nav-links">
+                <h3 style="color:#fff; margin-top:0;">QUICK JUMP</h3>
+                <button class="nav-btn" onclick="scrollToSec('sec-whoami')">> Profile</button>
+                <button class="nav-btn" onclick="scrollToSec('sec-exp')">> Operations</button>
+                <button class="nav-btn" onclick="scrollToSec('sec-projects')">> Research</button>
+                <button class="nav-btn" onclick="scrollToSec('sec-achievements')">> Honors</button>
+                <button class="nav-btn" onclick="scrollToSec('sec-skills')">> Arsenal</button>
+                <button class="nav-btn" onclick="scrollToSec('sec-connect')">> Comms_Link</button>
+            </div>
+
             <br>
             <h3 style="color:#fff; border-bottom: 1px solid #444; padding-bottom: 5px;">LIVE PACKET STREAM</h3>
             <div id="stream-data" style="font-size: 10px; font-family: monospace; opacity: 0.9;"></div>
@@ -222,6 +240,17 @@
             <div class="title-container">
                 <h1 class="cyber-title" data-value="SANTHAKUMAR PARIVALLAL">SYSTEM_INIT...</h1>
                 <div class="subtitle">DOSSIER // PENETRATION TESTER & RED TEAMER</div>
+            </div>
+
+            <div class="control-panel">
+                <div style="width: 100%; color: #aaa; margin-bottom: 5px; font-size: 12px;">> AWAITING OPERATOR INPUT...</div>
+                
+                <a href="resume.pdf" download="Santhakumar_Resume.pdf" style="border:none;">
+                    <button class="action-btn download">./download_dossier.sh</button>
+                </a>
+                
+                <button class="action-btn" onclick="window.open('https://www.linkedin.com/in/santhakumar-parivallal-81307230a', '_blank')">./init_handshake.exe</button>
+                <button class="action-btn warning" onclick="toggleCRT()">sudo toggle_crt</button>
             </div>
 
             <div style="margin-bottom: 25px;">
@@ -328,10 +357,12 @@
             </section>
 
             <div style="padding-bottom: 100px;">
-                <span class="prompt">root@santha:~#</span> <span class="blink" style="color:var(--toxic-green); font-weight:bold;">_</span>
+                <span class="prompt">root@santha:~#</span> <span class="blink" style="color:var(--toxic-green); font-weight:bold; animation: blinker 1s linear infinite;">_</span>
             </div>
         </main>
     </div>
+
+    <style>@keyframes blinker { 50% { opacity: 0; } }</style>
 
     <script>
         // NAME DECRYPTION EFFECT
@@ -376,7 +407,7 @@
             cursorRing.style.borderColor = 'var(--toxic-green)';
         });
 
-        const interactables = document.querySelectorAll('a, button, .data-section, [data-tooltip]');
+        const interactables = document.querySelectorAll('a, button, .action-btn, .nav-btn, .data-section, [data-tooltip]');
         interactables.forEach(el => {
             el.addEventListener('mouseenter', () => {
                 cursorRing.style.width = '48px'; 
@@ -416,6 +447,7 @@
         }
 
         window.addEventListener('resize', init);
+        window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
 
         const hexChars = "0123456789ABCDEF".split("");
         const fontSize = 14;
@@ -447,13 +479,11 @@
                 let px = p.x + dx;
                 let py = p.y + dy;
 
-                // Draw Blue Dots
                 ctx.beginPath();
                 ctx.fillStyle = 'rgba(0, 255, 255, 0.8)';
                 ctx.arc(px, py, p.size, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Draw Red Lines
                 ctx.strokeStyle = 'rgba(255, 7, 58, 0.35)'; 
                 ctx.lineWidth = 0.8;
                 for (let j = i + 1; j < points.length; j++) {
@@ -490,7 +520,7 @@
                 sections[currentSection].style.opacity = 1;
                 
                 setTimeout(() => {
-                    sections[currentSection - 1].scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    sections[currentSection - 1]?.scrollIntoView({ behavior: 'smooth', block: 'end' });
                 }, 50);
                 
                 currentSection++;
@@ -502,9 +532,19 @@
                 setTimeout(streamData, 800); 
             }
         }
-        setTimeout(streamData, 2000); // Waits for name to decrypt before streaming resume
+        setTimeout(streamData, 2000);
 
+        // UI FUNCTIONS
         function closeAlert() { document.getElementById('alert-overlay').style.display = 'none'; }
+        
+        function scrollToSec(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function toggleCRT() {
+            const crt = document.getElementById('crt-lines');
+            crt.style.opacity = crt.style.opacity === '0' ? '0.8' : '0';
+        }
     </script>
 </body>
 </html>
