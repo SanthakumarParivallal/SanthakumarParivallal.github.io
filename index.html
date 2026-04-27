@@ -68,35 +68,30 @@
         .skill-bar-bg { width: 100%; height: 8px; background: #222; border-radius: 4px; overflow: hidden; border: 1px solid #444; }
         .skill-bar-fill { height: 100%; background: linear-gradient(90deg, var(--secondary), var(--primary)); width: 0; transition: width 1.5s cubic-bezier(0.1, 0.5, 0.1, 1); }
 
-        /* 3D ROTATING TIMELINE CAROUSEL */
+        /* 3D ROTATING TIMELINE CAROUSEL WITH DRAG */
+        .timeline-container { width: 100%; display: flex; justify-content: center; align-items: center; padding: 50px 0; }
         .timeline-scene {
-            width: 100%; height: 400px; perspective: 1200px;
-            display: flex; justify-content: center; align-items: center; position: relative;
-            margin: 40px 0;
+            width: 340px; height: 300px; perspective: 1500px; position: relative;
+            cursor: grab; /* Shows user they can grab it */
         }
+        .timeline-scene:active { cursor: grabbing; } /* Cursor changes when actively dragging */
         .timeline-carousel {
-            width: 340px; height: 300px; position: absolute;
-            transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+            width: 100%; height: 100%; position: absolute;
+            transform-style: preserve-3d;
+            /* Remove the transition so it drags smoothly in real-time */
         }
         .timeline-card {
             position: absolute; width: 340px; height: 300px;
             background: rgba(10, 15, 25, 0.95); border: 1px solid #444;
             padding: 30px; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
             display: flex; flex-direction: column; justify-content: center;
-            /* Backface visibility lets you see cards spinning behind */
-            backface-visibility: hidden;
-            border-top: 4px solid var(--accent);
+            backface-visibility: hidden; border-top: 4px solid var(--accent);
+            /* Prevent text selection while dragging */
+            user-select: none; -webkit-user-select: none;
         }
         .timeline-date { color: var(--secondary); font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px; }
         .timeline-title { color: var(--primary); font-size: 1.3rem; margin-bottom: 15px; line-height: 1.3; }
         .timeline-desc { color: var(--text-light); font-size: 0.95rem; line-height: 1.6; }
-        .carousel-controls { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
-        .control-btn {
-            background: transparent; color: var(--secondary); border: 1px solid var(--secondary);
-            padding: 10px 25px; font-family: var(--font-main); cursor: pointer; transition: 0.3s;
-            text-transform: uppercase; font-weight: bold; border-radius: 3px;
-        }
-        .control-btn:hover { background: var(--secondary); color: #000; box-shadow: 0 0 15px var(--secondary); }
 
         /* CERTS GRID & FILTERS */
         .filter-container { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
@@ -104,6 +99,7 @@
         .filter-btn:hover, .filter-btn.active { border-color: var(--secondary); color: var(--secondary); background: rgba(0,255,255,0.1); }
         .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
         .tilt-card { background: var(--surface-color); padding: 30px; border-radius: 10px; border: 1px solid #333; position: relative; overflow: hidden; transform-style: preserve-3d; will-change: transform; transition: opacity 0.4s, transform 0.4s; }
+        .tilt-card.hide { display: none; }
         .tilt-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--secondary); transition: 0.3s; }
         .tilt-card:hover::before { width: 100%; opacity: 0.1; }
         .tilt-card h3 { color: #fff; margin-bottom: 10px; transform: translateZ(30px); font-size: 1.1rem; }
@@ -125,13 +121,13 @@
         .input-group textarea { resize: vertical; min-height: 140px; }
 
         @media (max-width: 900px) {
-            .timeline-scene { transform: scale(0.85); height: 300px; }
+            .timeline-scene { transform: scale(0.85); }
         }
         @media (max-width: 768px) {
             .nav-links { display: none; } .hero-name { font-size: 3rem; } .skills-grid { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: 1fr; }
             .contact-wrapper { grid-template-columns: 1fr; }
-            .timeline-scene { transform: scale(0.7); height: 250px; }
+            .timeline-scene { transform: scale(0.7); }
         }
     </style>
 </head>
@@ -195,11 +191,11 @@
     </section>
 
     <section id="experience">
-        <h2 class="section-title reveal">Timeline</h2>
+        <h2 class="section-title reveal">Timeline <span style="font-size: 0.4em; color: var(--secondary); letter-spacing: 0;">[ DRAG TO ROTATE ]</span></h2>
         
-        <div class="reveal">
-            <div class="timeline-scene">
-                <div class="timeline-carousel">
+        <div class="reveal timeline-container">
+            <div class="timeline-scene" id="scene">
+                <div class="timeline-carousel" id="carousel">
                     <div class="timeline-card">
                         <div class="timeline-date">Sep 2025 – Sep 2026</div>
                         <h3 class="timeline-title">MSc Cyber Security</h3>
@@ -226,11 +222,6 @@
                         <p class="timeline-desc">Anjalai Ammal Mahalingam Engineering College, India. Acquired Grade: 80%</p>
                     </div>
                 </div>
-            </div>
-            
-            <div class="carousel-controls">
-                <button class="control-btn" id="prev-btn"><< Rotate Left</button>
-                <button class="control-btn" id="next-btn">Rotate Right >></button>
             </div>
         </div>
     </section>
@@ -300,29 +291,78 @@
         }
         window.addEventListener('scroll', checkScroll); checkScroll(); 
 
-        // --- 3D ROTATING TIMELINE LOGIC ---
-        const carousel = document.querySelector('.timeline-carousel');
+        // --- MOUSE TRACTION 3D TIMELINE ---
+        const carousel = document.getElementById('carousel');
+        const scene = document.getElementById('scene');
         const cells = carousel.querySelectorAll('.timeline-card');
-        const cellCount = 5; // You have 5 timeline items
-        // Calculate the radius so cards don't overlap (280px pushes them outwards in a circle)
+        const cellCount = cells.length;
         const radius = Math.round( (340 / 2) / Math.tan( Math.PI / cellCount ) ) + 40; 
-        let selectedIndex = 0;
+        
+        let currentAngle = 0;
+        let isDragging = false;
+        let startX;
+        let startAngle;
 
-        // Position each card in 3D space
+        // Position cells in circle
         cells.forEach((cell, i) => {
             const angle = (360 / cellCount) * i;
             cell.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
         });
-
-        function rotateCarousel() {
-            const angle = selectedIndex / cellCount * -360;
-            // Pushes the entire carousel back so the front card is visible, then rotates
-            carousel.style.transform = `translateZ(${-radius}px) rotateY(${angle}deg)`;
+        
+        function updateCarousel() {
+            carousel.style.transform = `translateZ(${-radius}px) rotateY(${currentAngle}deg)`;
         }
-        rotateCarousel(); // Initialize position
+        updateCarousel(); // Set initial state
 
-        document.getElementById('next-btn').addEventListener('click', () => { selectedIndex++; rotateCarousel(); });
-        document.getElementById('prev-btn').addEventListener('click', () => { selectedIndex--; rotateCarousel(); });
+        // Mouse Events
+        scene.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.pageX;
+            startAngle = currentAngle;
+            carousel.style.transition = 'none'; // Disable transition for 1:1 drag movement
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            // Calculate how far the mouse moved (multiplier controls sensitivity)
+            const diffX = (e.pageX - startX) * 0.4; 
+            currentAngle = startAngle + diffX;
+            updateCarousel();
+        });
+
+        document.addEventListener('mouseup', () => {
+            if(!isDragging) return;
+            isDragging = false;
+            // Snap to the nearest panel on release
+            const segmentAngle = 360 / cellCount;
+            currentAngle = Math.round(currentAngle / segmentAngle) * segmentAngle;
+            carousel.style.transition = 'transform 0.5s ease-out';
+            updateCarousel();
+        });
+        
+        // Touch events for Mobile
+        scene.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startX = e.touches[0].pageX;
+            startAngle = currentAngle;
+            carousel.style.transition = 'none';
+        }, {passive: true});
+        
+        document.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const diffX = (e.touches[0].pageX - startX) * 0.5; 
+            currentAngle = startAngle + diffX;
+            updateCarousel();
+        }, {passive: true});
+
+        document.addEventListener('touchend', () => {
+            if(!isDragging) return;
+            isDragging = false;
+            const segmentAngle = 360 / cellCount;
+            currentAngle = Math.round(currentAngle / segmentAngle) * segmentAngle;
+            carousel.style.transition = 'transform 0.5s ease-out';
+            updateCarousel();
+        });
 
         // --- CERTIFICATES FILTER ---
         function filterCerts(category) {
