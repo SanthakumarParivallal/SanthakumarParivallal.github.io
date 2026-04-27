@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Santhakumar | Cyberfolio</title>
     
-    <link rel="icon" type="image/png" href="./favicon.png?v=2">
-    <link rel="shortcut icon" type="image/png" href="./favicon.png?v=2">
+    <link rel="icon" type="image/png" href="./favicon.png?v=3">
+    <link rel="shortcut icon" type="image/png" href="./favicon.png?v=3">
     
     <style>
         :root {
@@ -68,30 +68,59 @@
         .skill-bar-bg { width: 100%; height: 8px; background: #222; border-radius: 4px; overflow: hidden; border: 1px solid #444; }
         .skill-bar-fill { height: 100%; background: linear-gradient(90deg, var(--secondary), var(--primary)); width: 0; transition: width 1.5s cubic-bezier(0.1, 0.5, 0.1, 1); }
 
-        /* 3D ROTATING TIMELINE CAROUSEL WITH DRAG */
-        .timeline-container { width: 100%; display: flex; justify-content: center; align-items: center; padding: 50px 0; }
-        .timeline-scene {
-            width: 340px; height: 300px; perspective: 1500px; position: relative;
-            cursor: grab; /* Shows user they can grab it */
+        /* NEW VERTICAL CYBER TIMELINE */
+        .cyber-timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 40px auto 0;
         }
-        .timeline-scene:active { cursor: grabbing; } /* Cursor changes when actively dragging */
-        .timeline-carousel {
-            width: 100%; height: 100%; position: absolute;
-            transform-style: preserve-3d;
-            /* Remove the transition so it drags smoothly in real-time */
+        .timeline-conduit {
+            position: absolute;
+            left: 50%; top: 0; bottom: 0; width: 4px;
+            background: rgba(0, 255, 255, 0.1);
+            transform: translateX(-50%); border-radius: 2px; overflow: hidden;
         }
+        .timeline-conduit::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 20%;
+            background: linear-gradient(to bottom, transparent, var(--secondary), transparent);
+            animation: dataFlow 3s linear infinite;
+        }
+        @keyframes dataFlow { 0% { top: -20%; } 100% { top: 120%; } }
+        
+        .timeline-row {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; margin-bottom: 40px; position: relative;
+        }
+        .timeline-row:nth-child(even) { flex-direction: row-reverse; }
+        
         .timeline-card {
-            position: absolute; width: 340px; height: 300px;
-            background: rgba(10, 15, 25, 0.95); border: 1px solid #444;
-            padding: 30px; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
-            display: flex; flex-direction: column; justify-content: center;
-            backface-visibility: hidden; border-top: 4px solid var(--accent);
-            /* Prevent text selection while dragging */
-            user-select: none; -webkit-user-select: none;
+            width: 45%; background: var(--surface-color); padding: 30px;
+            border: 1px solid #333; border-radius: 5px; position: relative;
+            transition: all 0.4s ease; z-index: 1;
         }
-        .timeline-date { color: var(--secondary); font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px; }
-        .timeline-title { color: var(--primary); font-size: 1.3rem; margin-bottom: 15px; line-height: 1.3; }
-        .timeline-desc { color: var(--text-light); font-size: 0.95rem; line-height: 1.6; }
+        
+        /* The glowing highlight bar on the cards */
+        .timeline-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--secondary); opacity: 0.5; transition: 0.4s; z-index: -1;
+        }
+        .timeline-row:nth-child(odd) .timeline-card::before { left: auto; right: 0; }
+        .timeline-row:nth-child(even) .timeline-card::before { left: 0; right: auto; }
+        
+        .timeline-card:hover { border-color: var(--secondary); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 255, 255, 0.1); }
+        .timeline-card:hover::before { opacity: 1; width: 100%; background: rgba(0, 255, 255, 0.05); }
+
+        .timeline-node {
+            width: 20px; height: 20px; background: var(--bg-color);
+            border: 3px solid var(--secondary); border-radius: 50%;
+            position: absolute; left: 50%; transform: translateX(-50%);
+            z-index: 2; transition: 0.4s;
+        }
+        .timeline-row:hover .timeline-node { background: var(--secondary); box-shadow: 0 0 15px var(--secondary); }
+
+        .timeline-date { color: var(--accent); font-weight: bold; margin-bottom: 10px; letter-spacing: 1px; font-size: 0.9rem; }
+        .timeline-title { color: var(--primary); margin-bottom: 10px; font-size: 1.2rem; }
+        .timeline-desc { color: var(--text-light); font-size: 0.95rem; line-height: 1.5; }
 
         /* CERTS GRID & FILTERS */
         .filter-container { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
@@ -106,6 +135,7 @@
         .tilt-card p { color: var(--text-muted); font-size: 0.85rem; transform: translateZ(20px); }
         .cert-link { display: inline-block; margin-top: 10px; color: var(--primary); text-decoration: none; font-size: 0.85rem; border-bottom: 1px dashed var(--primary); }
 
+        /* CONTACT SECTION */
         .contact-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
         .contact-info-col { display: flex; flex-direction: column; gap: 20px; }
         .contact-box { padding: 30px; background: var(--surface-color); border: 1px solid #333; transition: 0.3s; }
@@ -120,14 +150,15 @@
         .input-group input:focus, .input-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 255, 0, 0.2); }
         .input-group textarea { resize: vertical; min-height: 140px; }
 
-        @media (max-width: 900px) {
-            .timeline-scene { transform: scale(0.85); }
-        }
         @media (max-width: 768px) {
             .nav-links { display: none; } .hero-name { font-size: 3rem; } .skills-grid { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: 1fr; }
-            .contact-wrapper { grid-template-columns: 1fr; }
-            .timeline-scene { transform: scale(0.7); }
+            .stats-grid { grid-template-columns: 1fr; } .contact-wrapper { grid-template-columns: 1fr; }
+            /* Mobile Timeline Adjustments */
+            .timeline-conduit { left: 20px; }
+            .timeline-row { flex-direction: column !important; align-items: flex-start; }
+            .timeline-card { width: calc(100% - 40px); margin-left: 40px; }
+            .timeline-row:nth-child(odd) .timeline-card::before, .timeline-row:nth-child(even) .timeline-card::before { left: 0; right: auto; }
+            .timeline-node { left: 20px; }
         }
     </style>
 </head>
@@ -191,38 +222,56 @@
     </section>
 
     <section id="experience">
-        <h2 class="section-title reveal">Timeline <span style="font-size: 0.4em; color: var(--secondary); letter-spacing: 0;">[ DRAG TO ROTATE ]</span></h2>
+        <h2 class="section-title reveal">Timeline</h2>
         
-        <div class="reveal timeline-container">
-            <div class="timeline-scene" id="scene">
-                <div class="timeline-carousel" id="carousel">
-                    <div class="timeline-card">
-                        <div class="timeline-date">Sep 2025 – Sep 2026</div>
-                        <h3 class="timeline-title">MSc Cyber Security</h3>
-                        <p class="timeline-desc">Birmingham City University, UK. Advanced focus on offensive security and risk management.</p>
-                    </div>
-                    <div class="timeline-card">
-                        <div class="timeline-date">Dec 2025</div>
-                        <h3 class="timeline-title">Deloitte <br> Cybersecurity Intern</h3>
-                        <p class="timeline-desc">Analyzed enterprise-level security frameworks and assisted in evaluating organizational risk postures.</p>
-                    </div>
-                    <div class="timeline-card">
-                        <div class="timeline-date">Dec 2025</div>
-                        <h3 class="timeline-title">Tata Group <br> Analyst Intern</h3>
-                        <p class="timeline-desc">Performed analytical tasks related to threat monitoring and security incident response simulations.</p>
-                    </div>
-                    <div class="timeline-card">
-                        <div class="timeline-date">Feb 2024 – Aug 2024</div>
-                        <h3 class="timeline-title">Invoking System Pvt. Ltd. <br> Full Stack Dev Intern</h3>
-                        <p class="timeline-desc">Collaborated with senior developers to implement an export website using React Js and JavaScript.</p>
-                    </div>
-                    <div class="timeline-card">
-                        <div class="timeline-date">Apr 2019 – Apr 2023</div>
-                        <h3 class="timeline-title">B.E. Computer Science</h3>
-                        <p class="timeline-desc">Anjalai Ammal Mahalingam Engineering College, India. Acquired Grade: 80%</p>
-                    </div>
+        <div class="cyber-timeline">
+            <div class="timeline-conduit"></div>
+            
+            <div class="timeline-row reveal">
+                <div class="timeline-card">
+                    <div class="timeline-date">> Sep 2025 – Sep 2026</div>
+                    <h3 class="timeline-title">MSc Cyber Security</h3>
+                    <p class="timeline-desc">Birmingham City University, UK. Advanced focus on offensive security and risk management.</p>
                 </div>
+                <div class="timeline-node"></div>
             </div>
+
+            <div class="timeline-row reveal">
+                <div class="timeline-card">
+                    <div class="timeline-date">> Dec 2025</div>
+                    <h3 class="timeline-title">Deloitte | Cybersecurity Intern</h3>
+                    <p class="timeline-desc">Analyzed enterprise-level security frameworks and assisted in evaluating organizational risk postures.</p>
+                </div>
+                <div class="timeline-node"></div>
+            </div>
+
+            <div class="timeline-row reveal">
+                <div class="timeline-card">
+                    <div class="timeline-date">> Dec 2025</div>
+                    <h3 class="timeline-title">Tata Group | Analyst Intern</h3>
+                    <p class="timeline-desc">Performed analytical tasks related to threat monitoring and security incident response simulations.</p>
+                </div>
+                <div class="timeline-node"></div>
+            </div>
+
+            <div class="timeline-row reveal">
+                <div class="timeline-card">
+                    <div class="timeline-date">> Feb 2024 – Aug 2024</div>
+                    <h3 class="timeline-title">Invoking System Pvt. Ltd. | Full Stack Dev</h3>
+                    <p class="timeline-desc">Collaborated with senior developers to implement an export website using React Js and JavaScript.</p>
+                </div>
+                <div class="timeline-node"></div>
+            </div>
+
+            <div class="timeline-row reveal">
+                <div class="timeline-card">
+                    <div class="timeline-date">> Apr 2019 – Apr 2023</div>
+                    <h3 class="timeline-title">B.E. Computer Science</h3>
+                    <p class="timeline-desc">Anjalai Ammal Mahalingam Engineering College, India. Acquired Grade: 80%</p>
+                </div>
+                <div class="timeline-node"></div>
+            </div>
+            
         </div>
     </section>
 
@@ -290,79 +339,6 @@
             skillBars.forEach(bar => { if(bar.getBoundingClientRect().top < windowHeight - revealPoint) bar.style.width = bar.getAttribute('data-width'); });
         }
         window.addEventListener('scroll', checkScroll); checkScroll(); 
-
-        // --- MOUSE TRACTION 3D TIMELINE ---
-        const carousel = document.getElementById('carousel');
-        const scene = document.getElementById('scene');
-        const cells = carousel.querySelectorAll('.timeline-card');
-        const cellCount = cells.length;
-        const radius = Math.round( (340 / 2) / Math.tan( Math.PI / cellCount ) ) + 40; 
-        
-        let currentAngle = 0;
-        let isDragging = false;
-        let startX;
-        let startAngle;
-
-        // Position cells in circle
-        cells.forEach((cell, i) => {
-            const angle = (360 / cellCount) * i;
-            cell.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
-        });
-        
-        function updateCarousel() {
-            carousel.style.transform = `translateZ(${-radius}px) rotateY(${currentAngle}deg)`;
-        }
-        updateCarousel(); // Set initial state
-
-        // Mouse Events
-        scene.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            startX = e.pageX;
-            startAngle = currentAngle;
-            carousel.style.transition = 'none'; // Disable transition for 1:1 drag movement
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            // Calculate how far the mouse moved (multiplier controls sensitivity)
-            const diffX = (e.pageX - startX) * 0.4; 
-            currentAngle = startAngle + diffX;
-            updateCarousel();
-        });
-
-        document.addEventListener('mouseup', () => {
-            if(!isDragging) return;
-            isDragging = false;
-            // Snap to the nearest panel on release
-            const segmentAngle = 360 / cellCount;
-            currentAngle = Math.round(currentAngle / segmentAngle) * segmentAngle;
-            carousel.style.transition = 'transform 0.5s ease-out';
-            updateCarousel();
-        });
-        
-        // Touch events for Mobile
-        scene.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            startX = e.touches[0].pageX;
-            startAngle = currentAngle;
-            carousel.style.transition = 'none';
-        }, {passive: true});
-        
-        document.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            const diffX = (e.touches[0].pageX - startX) * 0.5; 
-            currentAngle = startAngle + diffX;
-            updateCarousel();
-        }, {passive: true});
-
-        document.addEventListener('touchend', () => {
-            if(!isDragging) return;
-            isDragging = false;
-            const segmentAngle = 360 / cellCount;
-            currentAngle = Math.round(currentAngle / segmentAngle) * segmentAngle;
-            carousel.style.transition = 'transform 0.5s ease-out';
-            updateCarousel();
-        });
 
         // --- CERTIFICATES FILTER ---
         function filterCerts(category) {
