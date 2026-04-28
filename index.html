@@ -56,7 +56,7 @@
         .reveal { opacity: 0; transform: translateY(40px); transition: 0.8s ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
-        .cyber-btn { display: inline-block; padding: 12px 30px; margin-top: 20px; background: transparent; color: var(--primary); border: 1px solid var(--primary); text-transform: uppercase; font-weight: bold; font-family: var(--font-main); text-decoration: none; position: relative; overflow: hidden; transition: all 0.3s; cursor: pointer; }
+        .cyber-btn { display: inline-block; padding: 12px 30px; margin-top: 20px; background: transparent; color: var(--primary); border: 1px solid var(--primary); text-transform: uppercase; font-weight: bold; font-family: var(--font-main); text-decoration: none; position: relative; overflow: hidden; transition: all 0.3s; cursor: pointer; text-align: center;}
         .cyber-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: rgba(0, 255, 0, 0.2); transition: all 0.3s; z-index: -1; }
         .cyber-btn:hover::before { left: 0; }
         .cyber-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 20px var(--primary); }
@@ -107,12 +107,12 @@
         .timeline-title { color: var(--primary); margin-bottom: 10px; font-size: 1.2rem; }
         .timeline-desc { color: var(--text-light); font-size: 0.95rem; line-height: 1.5; }
 
-        /* CERTS GRID & FILTERS */
+        /* CERTS & PROJECTS GRID */
         .filter-container { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
         .filter-btn { background: transparent; border: 1px solid #444; color: var(--text-light); padding: 8px 15px; font-family: var(--font-main); cursor: pointer; transition: 0.3s; }
         .filter-btn:hover, .filter-btn.active { border-color: var(--secondary); color: var(--secondary); background: rgba(0,255,255,0.1); }
         .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .tilt-card { background: var(--surface-color); padding: 30px; border-radius: 10px; border: 1px solid #333; position: relative; overflow: hidden; transform-style: preserve-3d; will-change: transform; transition: opacity 0.4s, transform 0.4s; }
+        .tilt-card { background: var(--surface-color); padding: 30px; border-radius: 10px; border: 1px solid #333; position: relative; overflow: hidden; transform-style: preserve-3d; will-change: transform; transition: opacity 0.4s, transform 0.4s; display: flex; flex-direction: column; justify-content: space-between;}
         .tilt-card.hide { display: none; }
         .tilt-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--secondary); transition: 0.3s; }
         .tilt-card:hover::before { width: 100%; opacity: 0.1; }
@@ -152,12 +152,13 @@
     <canvas id="bg-canvas" style="pointer-events: auto;"></canvas> 
 
     <nav>
-        <div class="logo">Santha<span>.kt</span></div>
+        <div class="logo">Dark<span>Hex</span></div>
         <ul class="nav-links">
             <li><a href="#home">Home</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#skills">Skills</a></li>
             <li><a href="#experience">Timeline</a></li>
+            <li><a href="#projects">Projects</a></li>
             <li><a href="#certs">Certifications</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
@@ -258,6 +259,38 @@
         </div>
     </section>
 
+    <section id="projects">
+        <h2 class="section-title reveal">Key Projects</h2>
+        <div class="card-grid reveal">
+            <div class="tilt-card project-card">
+                <div>
+                    <h3 style="color: var(--primary);">Brute Force Attack Detection</h3>
+                    <p style="color: var(--secondary); margin-bottom: 15px; font-weight: bold;">Machine Learning</p>
+                    <p class="timeline-desc">Designed and implemented an advanced machine learning model tailored to accurately identify, classify, and mitigate brute force attack vectors within network traffic data.</p>
+                </div>
+                <a href="https://github.com/SanthakumarParivallal/Brute-Force-Attack-Detection-using-Machine-learning.git" target="_blank" class="cyber-btn alt" style="padding: 10px; font-size: 0.85rem; width: 100%;">View Repository</a>
+            </div>
+            
+            <div class="tilt-card project-card">
+                <div>
+                    <h3 style="color: var(--primary);">RT-IoT2022 Flow Duration Prediction</h3>
+                    <p style="color: var(--secondary); margin-bottom: 15px; font-weight: bold;">Hybrid AI + Machine Learning</p>
+                    <p class="timeline-desc">Developed a sophisticated hybrid AI and ML solution for IoT network security, engineered to predict network flow duration and rapidly identify anomalous network behaviors.</p>
+                </div>
+                <a href="https://github.com/SanthakumarParivallal/Predicting-IoT-Network-Flow-Duration.git" target="_blank" class="cyber-btn alt" style="padding: 10px; font-size: 0.85rem; width: 100%;">View Repository</a>
+            </div>
+
+            <div class="tilt-card project-card">
+                <div>
+                    <h3 style="color: var(--primary);">Credit Card Fraud Detection</h3>
+                    <p style="color: var(--secondary); margin-bottom: 15px; font-weight: bold;">Machine Learning</p>
+                    <p class="timeline-desc">Built a highly accurate and robust classification model utilizing predictive machine learning algorithms to detect and flag fraudulent credit card transactions.</p>
+                </div>
+                <a href="https://github.com/Jatinkumar78/Credit-Card-Fraud-Detection-Using-Machine-Learning.git" target="_blank" class="cyber-btn alt" style="padding: 10px; font-size: 0.85rem; width: 100%;">View Repository</a>
+            </div>
+        </div>
+    </section>
+
     <section id="certs">
         <h2 class="section-title reveal">Certifications</h2>
         <div class="filter-container reveal">
@@ -335,12 +368,12 @@
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             cards.forEach(card => {
-                if (category === 'all' || card.classList.contains(category)) { card.style.display = 'block'; setTimeout(() => card.style.opacity = '1', 50); } 
+                if (category === 'all' || card.classList.contains(category)) { card.style.display = 'flex'; setTimeout(() => card.style.opacity = '1', 50); } 
                 else { card.style.opacity = '0'; setTimeout(() => card.style.display = 'none', 400); }
             });
         }
 
-        // --- 3D CARD TILT FOR CERTS ---
+        // --- 3D CARD TILT FOR CERTS & PROJECTS ---
         document.querySelectorAll('.tilt-card').forEach(card => {
             card.addEventListener('mousemove', e => {
                 let rect = card.getBoundingClientRect(); let xPercent = (e.clientX - rect.left) / rect.width - 0.5; let yPercent = (e.clientY - rect.top) / rect.height - 0.5;
@@ -366,11 +399,10 @@
 
         // Click to Hack / Spawn feature
         window.addEventListener('click', e => {
-            // Spawn 8 new nodes where clicked
             for(let i=0; i<8; i++) {
                 points.push({
                     x: e.clientX, y: e.clientY,
-                    vx: (Math.random() - 0.5) * 10, vy: (Math.random() - 0.5) * 10, // explode outwards fast
+                    vx: (Math.random() - 0.5) * 10, vy: (Math.random() - 0.5) * 10, 
                     size: Math.random() * 3 + 1
                 });
             }
@@ -382,35 +414,28 @@
             for(let i=0; i<points.length; i++) {
                 let p1 = points[i]; 
                 
-                // Mouse Repulsion Logic
                 let dx = p1.x - mouseX;
                 let dy = p1.y - mouseY;
                 let distToMouse = Math.sqrt(dx * dx + dy * dy);
-                let minDist = 180; // Distance at which nodes dodge the mouse
+                let minDist = 180; 
                 
                 if (distToMouse < minDist) {
                     let force = (minDist - distToMouse) / minDist;
                     let angle = Math.atan2(dy, dx);
-                    // Push the node away
                     p1.x += Math.cos(angle) * force * 5;
                     p1.y += Math.sin(angle) * force * 5;
                 }
 
-                // Apply velocity
                 p1.x += p1.vx; p1.y += p1.vy;
                 
-                // Add friction to explosive particles so they slow down over time
                 if(Math.abs(p1.vx) > 1.5) p1.vx *= 0.95;
                 if(Math.abs(p1.vy) > 1.5) p1.vy *= 0.95;
 
-                // Bounce off edges
                 if(p1.x < 0 || p1.x > width) p1.vx *= -1; 
                 if(p1.y < 0 || p1.y > height) p1.vy *= -1;
                 
-                // Draw Node
                 ctx.beginPath(); ctx.fillStyle = '#00ffff'; ctx.arc(p1.x, p1.y, p1.size, 0, Math.PI * 2); ctx.fill();
                 
-                // Connect Nodes
                 for(let j=i+1; j<points.length; j++) {
                     let p2 = points[j]; let dist = Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
                     if(dist < 150) { 
@@ -419,7 +444,6 @@
                     }
                 }
                 
-                // Draw lines to mouse (Hacking tether)
                 if(distToMouse < 220) { 
                     ctx.beginPath(); ctx.strokeStyle = `rgba(255, 7, 58, ${1 - distToMouse/220})`; 
                     ctx.moveTo(p1.x, p1.y); ctx.lineTo(mouseX, mouseY); ctx.stroke(); 
