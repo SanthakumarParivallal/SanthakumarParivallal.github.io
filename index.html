@@ -150,7 +150,7 @@
 <body>
 
     <div class="interactive-bg"></div>
-    <canvas id="bg-canvas"></canvas> 
+    <canvas id="bg-canvas" style="pointer-events: auto;"></canvas> 
 
     <nav>
         <div class="logo">Santha<span>.kt</span></div>
@@ -339,10 +339,20 @@
                 <div class="contact-box"><h3>Comm Frequency</h3><a href="tel:+447435709629">+44 7435709629</a></div>
                 <div class="contact-box"><h3>LinkedIn</h3><a href="https://www.linkedin.com/in/santhakumar-parivallal-81307230a" target="_blank">Access Encrypted Profile</a></div>
             </div>
-            <form class="contact-form" id="cyberForm" action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST">
-                <div class="input-group"><label>> OPERATOR_NAME</label><input type="text" name="name" required placeholder="Enter your designation/name"></div>
-                <div class="input-group"><label>> RETURN_ADDRESS</label><input type="email" name="email" required placeholder="Enter your communication email"></div>
-                <div class="input-group"><label>> SECURE_PAYLOAD</label><textarea name="message" required placeholder="Type your message..."></textarea></div>
+            
+            <form class="contact-form" id="cyberForm" onsubmit="sendEmail(event)">
+                <div class="input-group">
+                    <label>> OPERATOR_NAME</label>
+                    <input type="text" name="name" required placeholder="Enter your designation/name">
+                </div>
+                <div class="input-group">
+                    <label>> RETURN_ADDRESS</label>
+                    <input type="email" name="email" required placeholder="Enter your communication email">
+                </div>
+                <div class="input-group">
+                    <label>> SECURE_PAYLOAD</label>
+                    <textarea name="message" required placeholder="Type your message..."></textarea>
+                </div>
                 <button type="submit" class="cyber-btn" style="width: 100%; border-color: var(--secondary); color: var(--secondary);">Transmit Packet</button>
             </form>
         </div>
@@ -372,6 +382,20 @@
             skillBars.forEach(bar => { if(bar.getBoundingClientRect().top < windowHeight - revealPoint) bar.style.width = bar.getAttribute('data-width'); });
         }
         window.addEventListener('scroll', checkScroll); checkScroll(); 
+
+        // --- DIRECT EMAIL SCRIPT (NO FORMSPREE) ---
+        function sendEmail(e) {
+            e.preventDefault();
+            const name = document.querySelector('input[name="name"]').value;
+            const email = document.querySelector('input[name="email"]').value;
+            const message = document.querySelector('textarea[name="message"]').value;
+            
+            const subject = encodeURIComponent(`New Comms from ${name}`);
+            const body = encodeURIComponent(`Operator: ${name}\nReturn Address: ${email}\n\nPayload:\n${message}`);
+            
+            // This will securely pop open the user's default email client
+            window.location.href = `mailto:santha6383@gmail.com?subject=${subject}&body=${body}`;
+        }
 
         // --- CERTIFICATES FILTER ---
         function filterCerts(category) {
