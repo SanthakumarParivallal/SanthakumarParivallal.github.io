@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Santhakumar | Cyberfolio</title>
     
-    <link rel="icon" type="image/png" href="./favicon.png?v=6">
-    <link rel="shortcut icon" type="image/png" href="./favicon.png?v=6">
+    <link rel="icon" type="image/png" href="./favicon.png?v=7">
+    <link rel="shortcut icon" type="image/png" href="./favicon.png?v=7">
     
     <style>
         :root {
@@ -18,7 +18,6 @@
             --text-light: #e0e0e0;
             --text-muted: #888;
             --font-main: 'Courier New', Courier, monospace;
-            /* Variables for the reactive flashlight grid */
             --mouse-x: 50vw;
             --mouse-y: 50vh;
         }
@@ -26,7 +25,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
         body { background-color: var(--bg-color); color: var(--text-light); font-family: var(--font-main); overflow-x: hidden; cursor: crosshair; }
 
-        /* REACTIVE FLASHLIGHT GRID */
+        /* BACKGROUND */
         .interactive-bg {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: 
@@ -37,7 +36,7 @@
             z-index: -3; pointer-events: none;
             transition: background 0.1s ease;
         }
-
+        
         canvas#bg-canvas { position: fixed; top: 0; left: 0; z-index: -2; width: 100vw; height: 100vh; opacity: 0.8; pointer-events: none; }
 
         nav { position: fixed; top: 0; width: 100%; z-index: 1000; background: rgba(5, 10, 20, 0.7); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0, 255, 255, 0.2); display: flex; justify-content: space-between; align-items: center; padding: 15px 50px; transition: all 0.3s; }
@@ -49,7 +48,9 @@
         .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--secondary); transition: width 0.3s; box-shadow: 0 0 10px var(--secondary); }
         .nav-links a:hover::after { width: 100%; }
 
-        section { min-height: 100vh; padding: 120px 10vw 50px; display: flex; flex-direction: column; justify-content: center; }
+        /* Z-INDEX FIXED TO PREVENT BACKGROUND FROM BLOCKING CLICKS */
+        section { position: relative; z-index: 10; min-height: 100vh; padding: 120px 10vw 50px; display: flex; flex-direction: column; justify-content: center; }
+        
         .section-title { font-size: 2.5rem; color: var(--primary); margin-bottom: 50px; text-transform: uppercase; letter-spacing: 2px; display: inline-block; position: relative; }
         .section-title::after { content: ''; position: absolute; bottom: -10px; left: 0; width: 50px; height: 3px; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
 
@@ -126,9 +127,9 @@
         .contact-box { padding: 30px; background: var(--surface-color); border: 1px solid #333; transition: 0.3s; }
         .contact-box:hover { border-color: var(--primary); background: rgba(0,255,0,0.05); transform: translateY(-5px); }
         .contact-box h3 { color: var(--primary); margin-bottom: 10px; font-size: 1.1rem; }
-        .contact-box a { color: var(--text-light); text-decoration: none; font-weight: bold; }
+        .contact-box a { color: var(--text-light); text-decoration: none; font-weight: bold; z-index: 15; position: relative;}
         
-        .contact-form { background: var(--surface-color); padding: 30px; border: 1px solid #333; border-radius: 5px; }
+        .contact-form { background: var(--surface-color); padding: 30px; border: 1px solid #333; border-radius: 5px; z-index: 15; position: relative;}
         .input-group { margin-bottom: 20px; }
         .input-group label { display: block; color: var(--secondary); margin-bottom: 8px; font-size: 0.9rem; font-weight: bold; }
         .input-group input, .input-group textarea { width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.5); border: 1px solid #444; color: #fff; font-family: var(--font-main); transition: 0.3s; border-radius: 3px; cursor: crosshair; }
@@ -149,10 +150,10 @@
 <body>
 
     <div class="interactive-bg"></div>
-    <canvas id="bg-canvas" style="pointer-events: auto;"></canvas> 
+    <canvas id="bg-canvas"></canvas> 
 
     <nav>
-        <div class="logo">Dark<span>.Hex</span></div>
+        <div class="logo">Santha<span>.kt</span></div>
         <ul class="nav-links">
             <li><a href="#home">Home</a></li>
             <li><a href="#about">About</a></li>
@@ -392,30 +393,38 @@
             card.addEventListener('mouseleave', () => card.style.transform = `perspective(1000px) rotateY(0deg) rotateX(0deg) scale3d(1, 1, 1)`);
         });
 
-        // --- HIGHLY REACTIVE BACKGROUND NETWORK ---
+        // --- HIGHLY OPTIMIZED REACTIVE BACKGROUND NETWORK ---
         const canvas = document.getElementById('bg-canvas'); const ctx = canvas.getContext('2d');
         let width, height, points; let mouseX = -1000, mouseY = -1000; 
+        const MAX_PARTICLES = 60; // Hard cap to prevent lag
         
         function initCanvas() { 
             width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; points = []; 
-            for (let i = 0; i < 70; i++) points.push({ 
+            // Reduced initial particle count for performance
+            for (let i = 0; i < 40; i++) points.push({ 
                 x: Math.random() * width, y: Math.random() * height, 
                 vx: (Math.random() - 0.5) * 1.5, vy: (Math.random() - 0.5) * 1.5, 
-                size: Math.random() * 2.5 + 1 
+                size: Math.random() * 2 + 1 
             }); 
         }
         window.addEventListener('resize', initCanvas); 
         window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
 
-        // Click to Hack / Spawn feature
+        // Optimized Click to Spawn
         window.addEventListener('click', e => {
-            for(let i=0; i<8; i++) {
+            // Prevent spawning if clicking on a button, link, or form field
+            const target = e.target.tagName;
+            if (target === 'INPUT' || target === 'TEXTAREA' || target === 'BUTTON' || target === 'A') return;
+
+            for(let i=0; i<5; i++) {
                 points.push({
                     x: e.clientX, y: e.clientY,
-                    vx: (Math.random() - 0.5) * 10, vy: (Math.random() - 0.5) * 10, 
-                    size: Math.random() * 3 + 1
+                    vx: (Math.random() - 0.5) * 8, vy: (Math.random() - 0.5) * 8, 
+                    size: Math.random() * 2.5 + 1
                 });
             }
+            // Enforce hard cap to prevent lag
+            if (points.length > MAX_PARTICLES) points.splice(0, points.length - MAX_PARTICLES);
         });
 
         function drawCanvas() {
@@ -426,14 +435,14 @@
                 
                 let dx = p1.x - mouseX;
                 let dy = p1.y - mouseY;
-                let distToMouse = Math.sqrt(dx * dx + dy * dy);
-                let minDist = 180; 
+                // Faster distance check using squares
+                let distSqToMouse = dx * dx + dy * dy;
                 
-                if (distToMouse < minDist) {
-                    let force = (minDist - distToMouse) / minDist;
-                    let angle = Math.atan2(dy, dx);
-                    p1.x += Math.cos(angle) * force * 5;
-                    p1.y += Math.sin(angle) * force * 5;
+                if (distSqToMouse < 22500) { // 150 * 150
+                    let dist = Math.sqrt(distSqToMouse);
+                    let force = (150 - dist) / 150;
+                    p1.x += (dx / dist) * force * 5;
+                    p1.y += (dy / dist) * force * 5;
                 }
 
                 p1.x += p1.vx; p1.y += p1.vy;
@@ -446,16 +455,22 @@
                 
                 ctx.beginPath(); ctx.fillStyle = '#00ffff'; ctx.arc(p1.x, p1.y, p1.size, 0, Math.PI * 2); ctx.fill();
                 
+                // Optimized connection drawing
                 for(let j=i+1; j<points.length; j++) {
-                    let p2 = points[j]; let dist = Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
-                    if(dist < 150) { 
-                        ctx.beginPath(); ctx.strokeStyle = `rgba(0, 255, 255, ${1 - dist/150})`; 
+                    let p2 = points[j]; 
+                    let lineDx = p1.x - p2.x;
+                    let lineDy = p1.y - p2.y;
+                    let lineDistSq = lineDx * lineDx + lineDy * lineDy;
+                    
+                    if(lineDistSq < 14400) { // 120 * 120 (reduced line range to fix lag)
+                        let lineDist = Math.sqrt(lineDistSq);
+                        ctx.beginPath(); ctx.strokeStyle = `rgba(0, 255, 255, ${1 - lineDist/120})`; 
                         ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); 
                     }
                 }
                 
-                if(distToMouse < 220) { 
-                    ctx.beginPath(); ctx.strokeStyle = `rgba(255, 7, 58, ${1 - distToMouse/220})`; 
+                if(distSqToMouse < 40000) { // 200 * 200
+                    ctx.beginPath(); ctx.strokeStyle = `rgba(255, 7, 58, ${1 - Math.sqrt(distSqToMouse)/200})`; 
                     ctx.moveTo(p1.x, p1.y); ctx.lineTo(mouseX, mouseY); ctx.stroke(); 
                 }
             }
